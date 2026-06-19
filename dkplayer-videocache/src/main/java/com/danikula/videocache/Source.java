@@ -4,6 +4,8 @@ package com.danikula.videocache;
  * Source for proxy.
  *
  * @author Alexey Danilov (danikula@gmail.com).
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 public interface Source {
 
@@ -35,7 +37,6 @@ public interface Source {
     /**
      * Closes source and release resources. Every opened source should be closed.
      *
-     * @throws ProxyCacheException if error occur while closing source.
      */
-    void close() throws ProxyCacheException;
+    void close();
 }

@@ -1,24 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/black">
-
-    <LinearLayout
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@android:color/black"
         android:gravity="center"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/message"
+    <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/dkplayer_error_message"
             android:textColor="@android:color/white" />
 
-        <TextView
+    <TextView
             android:id="@+id/status_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -32,5 +27,4 @@
             android:text="@string/dkplayer_retry"
             android:textColor="@android:color/white" />
 
-    </LinearLayout>
-</FrameLayout>
+</LinearLayout>

@@ -4,8 +4,7 @@ import android.opengl.GLES20;
 
 public class GlCrosshatchFilter extends GlFilter {
 
-    private static final String CROSSHATCH_FRAGMENT_SHADER = "" +
-            "precision mediump float;" +
+    private static final String CROSSHATCH_FRAGMENT_SHADER = "precision mediump float;" +
             " varying vec2 vTextureCoord;\n" +
             " uniform lowp sampler2D sTexture;\n" +
             "uniform highp float crossHatchSpacing;\n" +

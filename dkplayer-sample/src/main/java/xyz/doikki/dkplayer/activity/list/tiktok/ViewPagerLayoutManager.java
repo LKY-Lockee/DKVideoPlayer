@@ -1,16 +1,20 @@
 package xyz.doikki.dkplayer.activity.list.tiktok;
 
 import android.content.Context;
+import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.View;
 
+/**
+ * Modified by LKY-Lockee on 2026/6/22
+ */
 @Deprecated
 public class ViewPagerLayoutManager extends LinearLayoutManager implements RecyclerView.OnChildAttachStateChangeListener {
 
-    private PagerSnapHelper mPagerSnapHelper;
+    private final PagerSnapHelper mPagerSnapHelper;
     private OnViewPagerListener mOnViewPagerListener;
     private int mDrift;//位移，用来判断移动方向
 
@@ -37,6 +41,7 @@ public class ViewPagerLayoutManager extends LinearLayoutManager implements Recyc
     public void onScrollStateChanged(int state) {
         if (state == RecyclerView.SCROLL_STATE_IDLE) {
             View viewIdle = mPagerSnapHelper.findSnapView(ViewPagerLayoutManager.this);
+            if (viewIdle == null) return;
             int positionIdle = getPosition(viewIdle);
             if (mOnViewPagerListener != null && getChildCount() == 1) {
                 mOnViewPagerListener.onPageSelected(positionIdle, positionIdle == getItemCount() - 1);
@@ -66,7 +71,7 @@ public class ViewPagerLayoutManager extends LinearLayoutManager implements Recyc
     /**
      * 设置监听
      */
-    public void setOnViewPagerListener(OnViewPagerListener listener){
+    public void setOnViewPagerListener(OnViewPagerListener listener) {
         this.mOnViewPagerListener = listener;
     }
 
@@ -79,10 +84,10 @@ public class ViewPagerLayoutManager extends LinearLayoutManager implements Recyc
 
     @Override
     public void onChildViewDetachedFromWindow(@NonNull View view) {
-        if (mDrift >= 0){
-            if (mOnViewPagerListener != null) mOnViewPagerListener.onPageRelease(true,getPosition(view));
-        }else {
-            if (mOnViewPagerListener != null) mOnViewPagerListener.onPageRelease(false,getPosition(view));
+        if (mDrift >= 0) {
+            if (mOnViewPagerListener != null) mOnViewPagerListener.onPageRelease(true, getPosition(view));
+        } else {
+            if (mOnViewPagerListener != null) mOnViewPagerListener.onPageRelease(false, getPosition(view));
         }
     }
 }

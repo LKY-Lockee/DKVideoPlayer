@@ -1,6 +1,16 @@
 package com.danikula.videocache;
 
+import static com.danikula.videocache.Preconditions.checkNotNull;
+import static com.danikula.videocache.ProxyCacheUtils.DEFAULT_BUFFER_SIZE;
+import static java.net.HttpURLConnection.HTTP_MOVED_PERM;
+import static java.net.HttpURLConnection.HTTP_MOVED_TEMP;
+import static java.net.HttpURLConnection.HTTP_OK;
+import static java.net.HttpURLConnection.HTTP_PARTIAL;
+import static java.net.HttpURLConnection.HTTP_SEE_OTHER;
+
 import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
 
 import com.danikula.videocache.headers.EmptyHeadersInjector;
 import com.danikula.videocache.headers.HeaderInjector;
@@ -15,18 +25,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
 
-import static com.danikula.videocache.Preconditions.checkNotNull;
-import static com.danikula.videocache.ProxyCacheUtils.DEFAULT_BUFFER_SIZE;
-import static java.net.HttpURLConnection.HTTP_MOVED_PERM;
-import static java.net.HttpURLConnection.HTTP_MOVED_TEMP;
-import static java.net.HttpURLConnection.HTTP_OK;
-import static java.net.HttpURLConnection.HTTP_PARTIAL;
-import static java.net.HttpURLConnection.HTTP_SEE_OTHER;
-
 /**
  * {@link Source} that uses http resource as source for {@link ProxyCache}.
  *
  * @author Alexey Danilov (danikula@gmail.com).
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 public class HttpUrlSource implements Source {
 
@@ -93,7 +97,7 @@ public class HttpUrlSource implements Source {
     }
 
     @Override
-    public void close() throws ProxyCacheException {
+    public void close() {
         if (connection != null) {
             try {
                 connection.disconnect();
@@ -195,6 +199,7 @@ public class HttpUrlSource implements Source {
         return sourceInfo.url;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "HttpUrlSource{sourceInfo='" + sourceInfo + "}";

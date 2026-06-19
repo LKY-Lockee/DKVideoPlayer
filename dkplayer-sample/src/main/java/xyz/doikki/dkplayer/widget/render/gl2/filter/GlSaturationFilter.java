@@ -3,8 +3,7 @@ package xyz.doikki.dkplayer.widget.render.gl2.filter;
 import android.opengl.GLES20;
 
 public class GlSaturationFilter extends GlFilter {
-    private static final String SATURATION_FRAGMENT_SHADER = "" +
-            "precision mediump float;" +
+    private static final String SATURATION_FRAGMENT_SHADER = "precision mediump float;" +
             " varying vec2 vTextureCoord;\n" +
             " \n" +
             " uniform lowp sampler2D sTexture;\n" +
@@ -21,7 +20,6 @@ public class GlSaturationFilter extends GlFilter {
             "    gl_FragColor = vec4(mix(greyScaleColor, textureColor.rgb, saturation), textureColor.w);\n" +
             "     \n" +
             " }";
-
 
     public GlSaturationFilter() {
         super(DEFAULT_VERTEX_SHADER, SATURATION_FRAGMENT_SHADER);

@@ -27,10 +27,12 @@ import xyz.doikki.videoplayer.player.VideoView;
 
 /**
  * ListView demo，不推荐，建议使用{@link RecyclerViewFragment}
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 public class ListViewFragment extends BaseFragment implements OnItemChildClickListener {
 
-    private List<VideoBean> mVideos = new ArrayList<>();
+    private final List<VideoBean> mVideos = new ArrayList<>();
     private VideoListViewAdapter mAdapter;
 
     private VideoView mVideoView;
@@ -46,7 +48,7 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
     @Override
     protected void initView() {
         super.initView();
-        mVideoView = new VideoView(getActivity());
+        mVideoView = new VideoView(requireActivity());
         mVideoView.setOnStateChangeListener(new VideoView.SimpleOnStateChangeListener() {
             @Override
             public void onPlayStateChanged(int playState) {
@@ -56,13 +58,13 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
                 }
             }
         });
-        mController = new StandardVideoController(getActivity());
-        mController.addControlComponent(new ErrorView(getActivity()));
-        mController.addControlComponent(new CompleteView(getActivity()));
-        mController.addControlComponent(new GestureView(getActivity()));
-        mTitleView = new TitleView(getActivity());
+        mController = new StandardVideoController(requireActivity());
+        mController.addControlComponent(new ErrorView(requireActivity()));
+        mController.addControlComponent(new CompleteView(requireActivity()));
+        mController.addControlComponent(new GestureView(requireActivity()));
+        mTitleView = new TitleView(requireActivity());
         mController.addControlComponent(mTitleView);
-        mController.addControlComponent(new VodControlView(getActivity()));
+        mController.addControlComponent(new VodControlView(requireActivity()));
         mController.setEnableOrientation(true);
         mVideoView.setVideoController(mController);
 
@@ -85,13 +87,10 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
                         scrollFlag = false;
                         break;
                     case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
-                        scrollFlag = true;
-                        break;
                     case AbsListView.OnScrollListener.SCROLL_STATE_FLING:
                         scrollFlag = true;
                         break;
                 }
-
             }
 
             @Override
@@ -177,8 +176,8 @@ public class ListViewFragment extends BaseFragment implements OnItemChildClickLi
         if (mVideoView.isFullScreen()) {
             mVideoView.stopFullScreen();
         }
-        if(getActivity().getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        if (requireActivity().getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+            requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
         mCurPosition = -1;
     }

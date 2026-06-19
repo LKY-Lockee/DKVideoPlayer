@@ -2,14 +2,15 @@ package xyz.doikki.dkplayer.fragment.main;
 
 import androidx.viewpager.widget.ViewPager;
 
-import xyz.doikki.dkplayer.R;
-import xyz.doikki.dkplayer.adapter.ListPagerAdapter;
-import xyz.doikki.dkplayer.fragment.BaseFragment;
-import xyz.doikki.dkplayer.util.Tag;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import xyz.doikki.dkplayer.R;
+import xyz.doikki.dkplayer.adapter.ListPagerAdapter;
+import xyz.doikki.dkplayer.fragment.BaseFragment;
+import xyz.doikki.dkplayer.util.Tag;
 
 /**
  * 注意：RecyclerView demo 我采用继承的方式实现，

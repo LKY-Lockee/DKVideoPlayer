@@ -1,5 +1,6 @@
 package xyz.doikki.dkplayer.adapter;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,17 +12,21 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+
+import java.util.List;
+
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.bean.TiktokBean;
 import xyz.doikki.dkplayer.util.cache.PreloadManager;
 import xyz.doikki.dkplayer.widget.component.TikTokView;
 
-import java.util.List;
-
+/**
+ * Modified by LKY-Lockee on 2026/6/22
+ */
 @Deprecated
 public class TikTokAdapter extends RecyclerView.Adapter<TikTokAdapter.VideoHolder> {
 
-    private List<TiktokBean> videos;
+    private final List<TiktokBean> videos;
 
     public TikTokAdapter(List<TiktokBean> videos) {
         this.videos = videos;
@@ -29,6 +34,7 @@ public class TikTokAdapter extends RecyclerView.Adapter<TikTokAdapter.VideoHolde
 
     private static final String TAG = "TikTokAdapter";
 
+    @NonNull
     @Override
     public VideoHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Log.d(TAG, "onCreateViewHolder: ");
@@ -37,7 +43,7 @@ public class TikTokAdapter extends RecyclerView.Adapter<TikTokAdapter.VideoHolde
     }
 
     @Override
-    public void onBindViewHolder(final VideoHolder holder, int position) {
+    public void onBindViewHolder(final VideoHolder holder, @SuppressLint("RecyclerView") int position) {
         Log.d(TAG, "onBindViewHolder: " + position);
         TiktokBean item = videos.get(position);
         Glide.with(holder.thumb.getContext())
@@ -62,10 +68,10 @@ public class TikTokAdapter extends RecyclerView.Adapter<TikTokAdapter.VideoHolde
 
     public static class VideoHolder extends RecyclerView.ViewHolder {
 
-        private ImageView thumb;
-        public TikTokView mTikTokView;
+        private final ImageView thumb;
+        public final TikTokView mTikTokView;
         public int mPosition;
-        public FrameLayout mPlayerContainer;
+        public final FrameLayout mPlayerContainer;
 
         VideoHolder(View itemView) {
             super(itemView);

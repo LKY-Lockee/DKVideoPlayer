@@ -2,34 +2,31 @@ package xyz.doikki.dkplayer.widget.render.gl2.filter;
 
 import android.opengl.GLES20;
 
-
-
 public class GlSphereRefractionFilter extends GlFilter {
 
-    private static final String FRAGMENT_SHADER =
-            "precision mediump float;" +
+    private static final String FRAGMENT_SHADER = "precision mediump float;" +
 
-                    "varying vec2 vTextureCoord;" +
-                    "uniform lowp sampler2D sTexture;" +
-                    "uniform highp vec2 center;" +
-                    "uniform highp float radius;" +
-                    "uniform highp float aspectRatio;" +
-                    "uniform highp float refractiveIndex;" +
+            "varying vec2 vTextureCoord;" +
+            "uniform lowp sampler2D sTexture;" +
+            "uniform highp vec2 center;" +
+            "uniform highp float radius;" +
+            "uniform highp float aspectRatio;" +
+            "uniform highp float refractiveIndex;" +
 
-                    "void main() {" +
-                    "highp vec2 textureCoordinateToUse = vec2(vTextureCoord.x, (vTextureCoord.y * aspectRatio + 0.5 - 0.5 * aspectRatio));" +
-                    "highp float distanceFromCenter = distance(center, textureCoordinateToUse);" +
-                    "lowp float checkForPresenceWithinSphere = step(distanceFromCenter, radius);" +
+            "void main() {" +
+            "highp vec2 textureCoordinateToUse = vec2(vTextureCoord.x, (vTextureCoord.y * aspectRatio + 0.5 - 0.5 * aspectRatio));" +
+            "highp float distanceFromCenter = distance(center, textureCoordinateToUse);" +
+            "lowp float checkForPresenceWithinSphere = step(distanceFromCenter, radius);" +
 
-                    "distanceFromCenter = distanceFromCenter / radius;" +
+            "distanceFromCenter = distanceFromCenter / radius;" +
 
-                    "highp float normalizedDepth = radius * sqrt(1.0 - distanceFromCenter * distanceFromCenter);" +
-                    "highp vec3 sphereNormal = normalize(vec3(textureCoordinateToUse - center, normalizedDepth));" +
+            "highp float normalizedDepth = radius * sqrt(1.0 - distanceFromCenter * distanceFromCenter);" +
+            "highp vec3 sphereNormal = normalize(vec3(textureCoordinateToUse - center, normalizedDepth));" +
 
-                    "highp vec3 refractedVector = refract(vec3(0.0, 0.0, -1.0), sphereNormal, refractiveIndex);" +
+            "highp vec3 refractedVector = refract(vec3(0.0, 0.0, -1.0), sphereNormal, refractiveIndex);" +
 
-                    "gl_FragColor = texture2D(sTexture, (refractedVector.xy + 1.0) * 0.5) * checkForPresenceWithinSphere;" +
-                    "}";
+            "gl_FragColor = texture2D(sTexture, (refractedVector.xy + 1.0) * 0.5) * checkForPresenceWithinSphere;" +
+            "}";
 
     private float centerX = 0.5f;
     private float centerY = 0.5f;
@@ -61,7 +58,7 @@ public class GlSphereRefractionFilter extends GlFilter {
         this.refractiveIndex = refractiveIndex;
     }
 
-    //////////////////////////////////////////////////////////////////////////
+    /// ///////////////////////////////////////////////////////////////////////
 
     @Override
     public void onDraw() {

@@ -1,8 +1,8 @@
 package com.danikula.videocache;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import static com.danikula.videocache.Preconditions.checkNotNull;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Proxy for {@link Source} with caching support ({@link Cache}).
@@ -12,6 +12,8 @@ import static com.danikula.videocache.Preconditions.checkNotNull;
  * Useful for streaming something with caching e.g. streaming video/audio etc.
  *
  * @author Alexey Danilov (danikula@gmail.com).
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 class ProxyCache {
 
@@ -71,7 +73,7 @@ class ProxyCache {
         }
     }
 
-    private synchronized void readSourceAsync() throws ProxyCacheException {
+    private synchronized void readSourceAsync() {
         boolean readingInProgress = sourceReaderThread != null && sourceReaderThread.getState() != Thread.State.TERMINATED;
         if (!stopped && !cache.isCompleted() && !readingInProgress) {
             sourceReaderThread = new Thread(new SourceReaderRunnable(), "Source reader for " + source);
@@ -160,11 +162,7 @@ class ProxyCache {
     }
 
     private void closeSource() {
-        try {
-            source.close();
-        } catch (ProxyCacheException e) {
-            onError(new ProxyCacheException("Error closing source " + source, e));
-        }
+        source.close();
     }
 
     protected final void onError(final Throwable e) {

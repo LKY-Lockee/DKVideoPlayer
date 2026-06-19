@@ -16,7 +16,7 @@ public class GlFilterGroup extends GlFilter {
 
     private final Collection<GlFilter> filters;
 
-    private final ArrayList<Pair<GlFilter, GLFramebufferObject>> list = new ArrayList<Pair<GlFilter, GLFramebufferObject>>();
+    private final ArrayList<Pair<GlFilter, GLFramebufferObject>> list = new ArrayList<>();
 
     public GlFilterGroup(final GlFilter... glFilters) {
         this(Arrays.asList(glFilters));

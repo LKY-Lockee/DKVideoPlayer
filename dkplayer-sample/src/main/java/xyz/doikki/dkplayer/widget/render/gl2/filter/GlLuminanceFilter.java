@@ -2,8 +2,7 @@ package xyz.doikki.dkplayer.widget.render.gl2.filter;
 
 public class GlLuminanceFilter extends GlFilter {
 
-    private static final String LUMINANCE_FRAGMENT_SHADER = "" +
-            "precision mediump float;" +
+    private static final String LUMINANCE_FRAGMENT_SHADER = "precision mediump float;" +
             "\n" +
             " varying vec2 vTextureCoord;\n" +
             "\n" +

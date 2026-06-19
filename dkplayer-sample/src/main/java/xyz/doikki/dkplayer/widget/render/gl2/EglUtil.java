@@ -23,7 +23,9 @@ import java.nio.FloatBuffer;
 
 import xyz.doikki.dkplayer.BuildConfig;
 
-
+/**
+ * Modified by LKY-Lockee on 2026/6/22
+ */
 public class EglUtil {
 
     public static final int NO_TEXTURE = -1;
@@ -65,6 +67,7 @@ public class EglUtil {
     public static void checkEglError(String operation) {
         if (!BuildConfig.DEBUG) return;
         int error;
+        //noinspection LoopStatementThatDoesntLoop
         while ((error = GLES20.glGetError()) != GLES20.GL_NO_ERROR) {
             throw new RuntimeException(operation + ": glError " + error);
         }

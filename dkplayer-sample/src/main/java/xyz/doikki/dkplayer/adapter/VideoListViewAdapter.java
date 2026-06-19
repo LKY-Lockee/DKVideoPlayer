@@ -9,16 +9,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import xyz.doikki.dkplayer.R;
-import xyz.doikki.dkplayer.bean.VideoBean;
-import xyz.doikki.dkplayer.adapter.listener.OnItemChildClickListener;
-import xyz.doikki.videocontroller.component.PrepareView;
 
 import java.util.List;
 
+import xyz.doikki.dkplayer.R;
+import xyz.doikki.dkplayer.adapter.listener.OnItemChildClickListener;
+import xyz.doikki.dkplayer.bean.VideoBean;
+import xyz.doikki.videocontroller.component.PrepareView;
+
+/**
+ * Modified by LKY-Lockee on 2026/6/22
+ */
 public class VideoListViewAdapter extends BaseAdapter {
 
-    private List<VideoBean> videos;
+    private final List<VideoBean> videos;
 
     private OnItemChildClickListener mOnItemChildClickListener;
 
@@ -72,10 +76,10 @@ public class VideoListViewAdapter extends BaseAdapter {
     public class ViewHolder implements View.OnClickListener {
 
         public int mPosition;
-        public FrameLayout mPlayerContainer;
-        public TextView mTitle;
-        public ImageView mThumb;
-        public PrepareView mPrepareView;
+        public final FrameLayout mPlayerContainer;
+        public final TextView mTitle;
+        public final ImageView mThumb;
+        public final PrepareView mPrepareView;
 
         ViewHolder(View itemView) {
             mPlayerContainer = itemView.findViewById(R.id.player_container);
@@ -99,7 +103,7 @@ public class VideoListViewAdapter extends BaseAdapter {
 
     public View getItemView(int position) {
         int count = mListView.getChildCount();
-        for (int i = 0; i < count; i++){
+        for (int i = 0; i < count; i++) {
             View itemView = mListView.getChildAt(i);
             ViewHolder viewHolder = (ViewHolder) itemView.getTag();
             if (position == viewHolder.mPosition) {

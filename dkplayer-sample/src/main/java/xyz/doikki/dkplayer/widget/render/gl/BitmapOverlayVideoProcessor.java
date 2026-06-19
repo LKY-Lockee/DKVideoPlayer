@@ -15,7 +15,7 @@
  */
 package xyz.doikki.dkplayer.widget.render.gl;
 
-import static com.google.android.exoplayer2.util.Assertions.checkNotNull;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -27,8 +27,9 @@ import android.graphics.drawable.BitmapDrawable;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 
-import com.google.android.exoplayer2.util.GlProgram;
-import com.google.android.exoplayer2.util.GlUtil;
+import androidx.media3.common.util.GlProgram;
+import androidx.media3.common.util.GlUtil;
+import androidx.media3.common.util.UnstableApi;
 
 import java.io.IOException;
 
@@ -37,8 +38,11 @@ import javax.microedition.khronos.opengles.GL10;
 /**
  * Video processor that demonstrates how to overlay a bitmap on video output using a GL shader. The
  * bitmap is drawn using an Android {@link Canvas}.
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
-/* package */ final class BitmapOverlayVideoProcessor implements GLSurfaceRenderView.VideoProcessor {
+@UnstableApi
+final class BitmapOverlayVideoProcessor implements GLSurfaceRenderView.VideoProcessor {
 
     private static final int OVERLAY_WIDTH = 512;
     private static final int OVERLAY_HEIGHT = 256;
@@ -82,7 +86,7 @@ import javax.microedition.khronos.opengles.GL10;
                             context,
                             /* vertexShaderFilePath= */ "bitmap_overlay_video_processor_vertex.glsl",
                             /* fragmentShaderFilePath= */ "bitmap_overlay_video_processor_fragment.glsl");
-        } catch (IOException e) {
+        } catch (IOException | GlUtil.GlException e) {
             throw new IllegalStateException(e);
         }
         program.setBufferAttribute(
@@ -110,33 +114,41 @@ import javax.microedition.khronos.opengles.GL10;
 
     @Override
     public void draw(int frameTexture, float[] transformMatrix) {
-        // Draw to the canvas and store it in a texture.
-        String text = "视频水印";
-        overlayBitmap.eraseColor(Color.TRANSPARENT);
-        overlayCanvas.drawBitmap(logoBitmap, /* left= */ 32, /* top= */ 32, paint);
-        overlayCanvas.drawText(text, /* x= */ 200, /* y= */ 130, paint);
-        GLES20.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
-        GLUtils.texSubImage2D(
-                GL10.GL_TEXTURE_2D, /* level= */ 0, /* xoffset= */ 0, /* yoffset= */ 0, overlayBitmap);
-        GlUtil.checkGlError();
+        try {
+            // Draw to the canvas and store it in a texture.
+            String text = "视频水印";
+            overlayBitmap.eraseColor(Color.TRANSPARENT);
+            overlayCanvas.drawBitmap(logoBitmap, /* left= */ 32, /* top= */ 32, paint);
+            overlayCanvas.drawText(text, /* x= */ 200, /* y= */ 130, paint);
+            GLES20.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
+            GLUtils.texSubImage2D(
+                    GL10.GL_TEXTURE_2D, /* level= */ 0, /* xoffset= */ 0, /* yoffset= */ 0, overlayBitmap);
+            GlUtil.checkGlError();
 
-        // Run the shader program.
-        GlProgram program = checkNotNull(this.program);
-        program.setSamplerTexIdUniform("uTexSampler0", frameTexture, /* texUnitIndex= */ 0);
-        program.setSamplerTexIdUniform("uTexSampler1", textures[0], /* texUnitIndex= */ 1);
-        program.setFloatUniform("uScaleX", bitmapScaleX);
-        program.setFloatUniform("uScaleY", bitmapScaleY);
-        program.setFloatsUniform("uTexTransform", transformMatrix);
-        program.bindAttributesAndUniforms();
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, /* first= */ 0, /* count= */ 4);
-        GlUtil.checkGlError();
+            // Run the shader program.
+            GlProgram program = checkNotNull(this.program);
+            program.setSamplerTexIdUniform("uTexSampler0", frameTexture, /* texUnitIndex= */ 0);
+            program.setSamplerTexIdUniform("uTexSampler1", textures[0], /* texUnitIndex= */ 1);
+            program.setFloatUniform("uScaleX", bitmapScaleX);
+            program.setFloatUniform("uScaleY", bitmapScaleY);
+            program.setFloatsUniform("uTexTransform", transformMatrix);
+            program.bindAttributesAndUniforms();
+            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+            GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, /* first= */ 0, /* count= */ 4);
+            GlUtil.checkGlError();
+        } catch (GlUtil.GlException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void release() {
         if (program != null) {
-            program.delete();
+            try {
+                program.delete();
+            } catch (GlUtil.GlException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

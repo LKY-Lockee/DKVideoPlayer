@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
@@ -16,6 +15,8 @@ import java.util.List;
  * Utils for work with files.
  *
  * @author Alexey Danilov (danikula@gmail.com).
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 class Files {
 
@@ -37,7 +38,7 @@ class Files {
         File[] files = directory.listFiles();
         if (files != null) {
             result = Arrays.asList(files);
-            Collections.sort(result, new LastModifiedComparator());
+            result.sort(new LastModifiedComparator());
         }
         return result;
     }
@@ -85,7 +86,7 @@ class Files {
         }
 
         private int compareLong(long first, long second) {
-            return (first < second) ? -1 : ((first == second) ? 0 : 1);
+            return Long.compare(first, second);
         }
     }
 

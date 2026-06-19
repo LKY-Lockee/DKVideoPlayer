@@ -17,14 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
-import xyz.doikki.dkplayer.R;
-import xyz.doikki.dkplayer.widget.CenteredImageSpan;
-import xyz.doikki.videoplayer.BuildConfig;
-import xyz.doikki.videoplayer.controller.ControlWrapper;
-import xyz.doikki.videoplayer.controller.IControlComponent;
-import xyz.doikki.videoplayer.player.VideoView;
-import xyz.doikki.videoplayer.util.PlayerUtils;
-
 import master.flame.danmaku.controller.DrawHandler;
 import master.flame.danmaku.danmaku.model.BaseDanmaku;
 import master.flame.danmaku.danmaku.model.DanmakuTimer;
@@ -35,7 +27,17 @@ import master.flame.danmaku.danmaku.model.android.Danmakus;
 import master.flame.danmaku.danmaku.model.android.SpannedCacheStuffer;
 import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
 import master.flame.danmaku.ui.widget.DanmakuView;
+import xyz.doikki.dkplayer.R;
+import xyz.doikki.dkplayer.widget.CenteredImageSpan;
+import xyz.doikki.videoplayer.BuildConfig;
+import xyz.doikki.videoplayer.controller.ControlWrapper;
+import xyz.doikki.videoplayer.controller.IControlComponent;
+import xyz.doikki.videoplayer.player.VideoView;
+import xyz.doikki.videoplayer.util.PlayerUtils;
 
+/**
+ * Modified by LKY-Lockee on 2026/6/22
+ */
 public class MyDanmakuView extends DanmakuView implements IControlComponent {
 
     private final DanmakuContext mContext;
@@ -197,8 +199,10 @@ public class MyDanmakuView extends DanmakuView implements IControlComponent {
         // for(int i=0;i<100;i++){
         // }
         Drawable drawable = ContextCompat.getDrawable(getContext(), R.mipmap.ic_launcher_round);
-        int size = PlayerUtils.dp2px(getContext(), 20);
-        drawable.setBounds(0, 0, size, size);
+        if (drawable != null) {
+            int size = PlayerUtils.dp2px(getContext(), 20);
+            drawable.setBounds(0, 0, size, size);
+        }
 
 //        danmaku.text = "这是一条弹幕";
         danmaku.text = createSpannable(drawable);

@@ -3,6 +3,7 @@ package xyz.doikki.dkplayer.activity.api;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,18 +18,35 @@ import xyz.doikki.videoplayer.player.VideoView;
 
 /**
  * 多开
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 public class ParallelPlayActivity extends AppCompatActivity {
 
     private static final String VOD_URL_1 = "http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4";
     private static final String VOD_URL_2 = DataUtil.SAMPLE_URL;
 
-    private List<VideoView> mVideoViews = new ArrayList<>();
+    private final List<VideoView> mVideoViews = new ArrayList<>();
+
+    private final OnBackPressedCallback mBackPressedCallback = new OnBackPressedCallback(true) {
+        @Override
+        public void handleOnBackPressed() {
+            for (VideoView vv : mVideoViews) {
+                if (vv.onBackPressed()) {
+                    return;
+                }
+            }
+            setEnabled(false);
+            getOnBackPressedDispatcher().onBackPressed();
+            setEnabled(true);
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parallel_play);
+        getOnBackPressedDispatcher().addCallback(this, mBackPressedCallback);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle(R.string.str_multi_player);
@@ -86,14 +104,5 @@ public class ParallelPlayActivity extends AppCompatActivity {
         for (VideoView vv : mVideoViews) {
             vv.release();
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        for (VideoView vv : mVideoViews) {
-            if (vv.onBackPressed())
-                return;
-        }
-        super.onBackPressed();
     }
 }

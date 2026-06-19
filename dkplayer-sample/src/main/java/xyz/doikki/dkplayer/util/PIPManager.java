@@ -11,17 +11,18 @@ import xyz.doikki.videoplayer.player.VideoViewManager;
 /**
  * 悬浮播放
  * Created by Doikki on 2018/3/30.
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
-
 public class PIPManager {
 
-    private static PIPManager instance;
+    private static volatile PIPManager instance;
     private final VideoView mVideoView;
     private final FloatView mFloatView;
     private final FloatController mFloatController;
     private boolean mIsShowing;
     private int mPlayingPosition = -1;
-    private Class mActClass;
+    private Class<?> mActClass;
 
 
     private PIPManager() {
@@ -105,11 +106,11 @@ public class PIPManager {
         }
     }
 
-    public void setActClass(Class cls) {
+    public void setActClass(Class<?> cls) {
         this.mActClass = cls;
     }
 
-    public Class getActClass() {
+    public Class<?> getActClass() {
         return mActClass;
     }
 

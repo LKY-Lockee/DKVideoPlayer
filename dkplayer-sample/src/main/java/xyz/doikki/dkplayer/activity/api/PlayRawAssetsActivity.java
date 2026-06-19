@@ -1,11 +1,12 @@
 package xyz.doikki.dkplayer.activity.api;
 
+import android.content.ContentResolver;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
+import android.net.Uri;
 import android.view.View;
 
-import com.google.android.exoplayer2.upstream.DataSpec;
-import com.google.android.exoplayer2.upstream.RawResourceDataSource;
+import androidx.media3.common.util.UnstableApi;
 
 import java.io.IOException;
 
@@ -18,6 +19,8 @@ import xyz.doikki.videoplayer.player.VideoView;
 
 /**
  * 播放raw/assets视频
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 
 public class PlayRawAssetsActivity extends BaseActivity<VideoView> {
@@ -41,41 +44,31 @@ public class PlayRawAssetsActivity extends BaseActivity<VideoView> {
         mVideoView.setVideoController(controller);
     }
 
+    @UnstableApi
     public void onButtonClick(View view) {
         mVideoView.release();
         Object playerFactory = Utils.getCurrentPlayerFactoryInVideoView(mVideoView);
 
-        switch (view.getId()) {
-            case R.id.btn_raw:
-                if (playerFactory instanceof ExoMediaPlayerFactory) { //ExoPlayer
-                    DataSpec dataSpec = new DataSpec(RawResourceDataSource.buildRawResourceUri(R.raw.movie));
-                    RawResourceDataSource rawResourceDataSource = new RawResourceDataSource(this);
-                    try {
-                        rawResourceDataSource.open(dataSpec);
-                    } catch (RawResourceDataSource.RawResourceDataSourceException e) {
-                        e.printStackTrace();
-                    }
-                    String url = rawResourceDataSource.getUri().toString();
-                    mVideoView.setUrl(url);
-                } else { //MediaPlayer,IjkPlayer
-                    String url = "android.resource://" + getPackageName() + "/" + R.raw.movie;
-                    mVideoView.setUrl(url);
+        int id = view.getId();
+        if (id == R.id.btn_raw) {
+            Uri rawUri = new Uri.Builder()
+                    .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+                    .path(Integer.toString(R.raw.movie))
+                    .build();
+            mVideoView.setUrl(rawUri.toString());
+        } else if (id == R.id.btn_assets) {
+            if (playerFactory instanceof ExoMediaPlayerFactory) { //ExoPlayer
+                mVideoView.setUrl("file:///android_asset/" + "test.mp4");
+            } else { //MediaPlayer,IjkPlayer
+                AssetManager am = getResources().getAssets();
+                AssetFileDescriptor afd = null;
+                try {
+                    afd = am.openFd("test.mp4");
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                break;
-            case R.id.btn_assets:
-                if (playerFactory instanceof ExoMediaPlayerFactory) { //ExoPlayer
-                    mVideoView.setUrl("file:///android_asset/" + "test.mp4");
-                } else { //MediaPlayer,IjkPlayer
-                    AssetManager am = getResources().getAssets();
-                    AssetFileDescriptor afd = null;
-                    try {
-                        afd = am.openFd("test.mp4");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    mVideoView.setAssetFileDescriptor(afd);
-                }
-                break;
+                mVideoView.setAssetFileDescriptor(afd);
+            }
         }
 
         mVideoView.start();

@@ -4,8 +4,7 @@ import android.opengl.GLES20;
 
 public class GlPixelationFilter extends GlFilter {
 
-    private static final String PIXELATION_FRAGMENT_SHADER = "" +
-            "precision highp float;\n" +
+    private static final String PIXELATION_FRAGMENT_SHADER = "precision highp float;\n" +
 
             "varying highp vec2 vTextureCoord;\n" +
 

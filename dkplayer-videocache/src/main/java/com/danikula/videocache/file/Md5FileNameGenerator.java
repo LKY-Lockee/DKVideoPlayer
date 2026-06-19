@@ -8,6 +8,8 @@ import com.danikula.videocache.ProxyCacheUtils;
  * Implementation of {@link FileNameGenerator} that uses MD5 of url as file name
  *
  * @author Alexey Danilov (danikula@gmail.com).
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 public class Md5FileNameGenerator implements FileNameGenerator {
 
@@ -24,6 +26,6 @@ public class Md5FileNameGenerator implements FileNameGenerator {
         int dotIndex = url.lastIndexOf('.');
         int slashIndex = url.lastIndexOf('/');
         return dotIndex != -1 && dotIndex > slashIndex && dotIndex + 2 + MAX_EXTENSION_LENGTH > url.length() ?
-                url.substring(dotIndex + 1, url.length()) : "";
+                url.substring(dotIndex + 1) : "";
     }
 }

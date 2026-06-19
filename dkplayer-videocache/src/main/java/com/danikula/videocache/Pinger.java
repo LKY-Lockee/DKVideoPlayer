@@ -1,5 +1,9 @@
 package com.danikula.videocache;
 
+import static com.danikula.videocache.Preconditions.checkArgument;
+import static com.danikula.videocache.Preconditions.checkNotNull;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Proxy;
@@ -17,14 +21,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 
-import static com.danikula.videocache.Preconditions.checkArgument;
-import static com.danikula.videocache.Preconditions.checkNotNull;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-
 /**
  * Pings {@link HttpProxyCacheServer} to make sure it works.
  *
  * @author Alexey Danilov (danikula@gmail.com).
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 
 class Pinger {
@@ -89,7 +91,7 @@ class Pinger {
         out.write(PING_RESPONSE.getBytes());
     }
 
-    private boolean pingServer() throws ProxyCacheException {
+    private boolean pingServer() {
         String pingUrl = getPingUrl();
         HttpUrlSource source = new HttpUrlSource(pingUrl);
         try {

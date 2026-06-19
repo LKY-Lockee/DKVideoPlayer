@@ -8,8 +8,7 @@ import android.opengl.GLES20;
  */
 public class GlOpacityFilter extends GlFilter {
 
-    private static final String OPACITY_FRAGMENT_SHADER = "" +
-            "precision mediump float;" +
+    private static final String OPACITY_FRAGMENT_SHADER = "precision mediump float;" +
             " varying highp vec2 vTextureCoord;\n" +
             "  \n" +
             " uniform lowp sampler2D sTexture;\n" +

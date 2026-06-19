@@ -2,10 +2,9 @@ package xyz.doikki.videoplayer.player;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
-import android.media.AudioManager;
+import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Build;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
@@ -13,6 +12,8 @@ import java.util.Map;
 
 /**
  * 封装系统的MediaPlayer，不推荐，系统的MediaPlayer兼容性较差，建议使用IjkPlayer或者ExoPlayer
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 public class AndroidMediaPlayer extends AbstractPlayer implements MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener, MediaPlayer.OnInfoListener,
@@ -21,7 +22,7 @@ public class AndroidMediaPlayer extends AbstractPlayer implements MediaPlayer.On
 
     protected MediaPlayer mMediaPlayer;
     private int mBufferedPercent;
-    protected Context mAppContext;
+    protected final Context mAppContext;
     private boolean mIsPreparing;
 
     public AndroidMediaPlayer(Context context) {
@@ -32,7 +33,10 @@ public class AndroidMediaPlayer extends AbstractPlayer implements MediaPlayer.On
     public void initPlayer() {
         mMediaPlayer = new MediaPlayer();
         setOptions();
-        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mMediaPlayer.setAudioAttributes(new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_MEDIA)
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .build());
         mMediaPlayer.setOnErrorListener(this);
         mMediaPlayer.setOnCompletionListener(this);
         mMediaPlayer.setOnInfoListener(this);
@@ -113,12 +117,8 @@ public class AndroidMediaPlayer extends AbstractPlayer implements MediaPlayer.On
     @Override
     public void seekTo(long time) {
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                //使用这个api seekTo定位更加准确 支持android 8.0以上的设备 https://developer.android.com/reference/android/media/MediaPlayer#SEEK_CLOSEST
-                mMediaPlayer.seekTo(time, MediaPlayer.SEEK_CLOSEST);
-            } else {
-                mMediaPlayer.seekTo((int) time);
-            }
+            //使用这个api seekTo定位更加准确 支持android 8.0以上的设备 https://developer.android.com/reference/android/media/MediaPlayer#SEEK_CLOSEST
+            mMediaPlayer.seekTo(time, MediaPlayer.SEEK_CLOSEST);
         } catch (IllegalStateException e) {
             mPlayerEventListener.onError();
         }
@@ -135,16 +135,13 @@ public class AndroidMediaPlayer extends AbstractPlayer implements MediaPlayer.On
         stop();
         final MediaPlayer mediaPlayer = mMediaPlayer;
         mMediaPlayer = null;
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    mediaPlayer.release();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        new Thread(() -> {
+            try {
+                mediaPlayer.release();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        }.start();
+        }).start();
     }
 
     @Override
@@ -197,28 +194,23 @@ public class AndroidMediaPlayer extends AbstractPlayer implements MediaPlayer.On
     @Override
     public void setSpeed(float speed) {
         // only support above Android M
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            try {
-                mMediaPlayer.setPlaybackParams(mMediaPlayer.getPlaybackParams().setSpeed(speed));
-            } catch (Exception e) {
-                mPlayerEventListener.onError();
-            }
+        try {
+            mMediaPlayer.setPlaybackParams(mMediaPlayer.getPlaybackParams().setSpeed(speed));
+        } catch (Exception e) {
+            mPlayerEventListener.onError();
         }
     }
 
     @Override
     public float getSpeed() {
         // only support above Android M
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            try {
-                float speed = mMediaPlayer.getPlaybackParams().getSpeed();
-                if (speed == 0f) speed = 1f;
-                return speed;
-            } catch (Exception e) {
-                return 1f;
-            }
+        try {
+            float speed = mMediaPlayer.getPlaybackParams().getSpeed();
+            if (speed == 0f) speed = 1f;
+            return speed;
+        } catch (Exception e) {
+            return 1f;
         }
-        return 1f;
     }
 
     @Override

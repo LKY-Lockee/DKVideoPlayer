@@ -10,13 +10,14 @@ import static javax.microedition.khronos.egl.EGL10.EGL_RENDERABLE_TYPE;
 import static javax.microedition.khronos.egl.EGL10.EGL_STENCIL_SIZE;
 
 import android.opengl.GLSurfaceView;
-import android.os.Build;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;
 
-
+/**
+ * Modified by LKY-Lockee on 2026/6/22
+ */
 public class GLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 
     private final int[] configSpec;
@@ -29,13 +30,11 @@ public class GLConfigChooser implements GLSurfaceView.EGLConfigChooser {
 
     private static final int EGL_CONTEXT_CLIENT_VERSION = 2;
 
-    private static final boolean USE_RGB_888 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1;
-
     public GLConfigChooser() {
         this(
-                USE_RGB_888 ? 8 : 5,
-                USE_RGB_888 ? 8 : 6,
-                USE_RGB_888 ? 8 : 5,
+                8,
+                8,
+                8,
                 0,
                 0,
                 0,
@@ -84,7 +83,7 @@ public class GLConfigChooser implements GLSurfaceView.EGLConfigChooser {
         return newConfigSpec;
     }
 
-    //////////////////////////////////////////////////////////////////////////
+    /// ///////////////////////////////////////////////////////////////////////
 
     @Override
     public EGLConfig chooseConfig(final EGL10 egl, final EGLDisplay display) {

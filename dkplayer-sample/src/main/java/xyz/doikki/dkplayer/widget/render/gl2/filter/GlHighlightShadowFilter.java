@@ -4,8 +4,7 @@ import android.opengl.GLES20;
 
 public class GlHighlightShadowFilter extends GlFilter {
 
-    private static final String HIGHLIGHT_SHADOW_FRAGMENT_SHADER = "" +
-            "precision mediump float;" +
+    private static final String HIGHLIGHT_SHADOW_FRAGMENT_SHADER = "precision mediump float;" +
             " uniform lowp sampler2D sTexture;\n" +
             " varying vec2 vTextureCoord;\n" +
             "  \n" +

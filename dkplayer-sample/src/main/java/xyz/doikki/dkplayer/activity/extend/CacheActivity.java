@@ -1,6 +1,7 @@
 package xyz.doikki.dkplayer.activity.extend;
 
 import com.danikula.videocache.HttpProxyCacheServer;
+
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.activity.BaseActivity;
 import xyz.doikki.dkplayer.util.DataUtil;

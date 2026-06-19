@@ -14,15 +14,22 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import xyz.doikki.dkplayer.R;
-import xyz.doikki.videoplayer.controller.IControlComponent;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
+import xyz.doikki.videoplayer.controller.IControlComponent;
 import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
+/**
+ * Modified by LKY-Lockee on 2026/6/22
+ */
 public class AdControlView extends FrameLayout implements IControlComponent, View.OnClickListener {
 
-    protected TextView mAdTime, mAdDetail;
-    protected ImageView mBack, mVolume, mFullScreen, mPlayButton;
+    protected final TextView mAdTime;
+    protected final TextView mAdDetail;
+    protected final ImageView mBack;
+    protected final ImageView mVolume;
+    protected final ImageView mFullScreen;
+    protected final ImageView mPlayButton;
     protected AdControlListener mListener;
 
     private ControlWrapper mControlWrapper;

@@ -1,5 +1,6 @@
 package xyz.doikki.dkplayer.adapter;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,17 +11,21 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+
+import java.util.List;
+
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.activity.list.tiktok.TikTok2Activity;
 import xyz.doikki.dkplayer.activity.list.tiktok.TikTok3Activity;
 import xyz.doikki.dkplayer.activity.list.tiktok.TikTokActivity;
 import xyz.doikki.dkplayer.bean.TiktokBean;
 
-import java.util.List;
-
+/**
+ * Modified by LKY-Lockee on 2026/6/22
+ */
 public class TikTokListAdapter extends RecyclerView.Adapter<TikTokListAdapter.TikTokListViewHolder> {
 
-    public List<TiktokBean> data;
+    public final List<TiktokBean> data;
 
     private int mId;
 
@@ -36,7 +41,7 @@ public class TikTokListAdapter extends RecyclerView.Adapter<TikTokListAdapter.Ti
     }
 
     @Override
-    public void onBindViewHolder(@NonNull TikTokListViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull TikTokListViewHolder holder, @SuppressLint("RecyclerView") int position) {
         TiktokBean item = data.get(position);
         holder.mTitle.setText(item.title);
         Glide.with(holder.mThumb.getContext())
@@ -57,8 +62,8 @@ public class TikTokListAdapter extends RecyclerView.Adapter<TikTokListAdapter.Ti
 
     public class TikTokListViewHolder extends RecyclerView.ViewHolder {
 
-        public ImageView mThumb;
-        public TextView mTitle;
+        public final ImageView mThumb;
+        public final TextView mTitle;
 
         public int mPosition;
 
@@ -67,20 +72,13 @@ public class TikTokListAdapter extends RecyclerView.Adapter<TikTokListAdapter.Ti
             mThumb = itemView.findViewById(R.id.iv_thumb);
             mTitle = itemView.findViewById(R.id.tv_title);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    switch (mId) {
-                        case R.id.impl_recycler_view: //RecyclerView
-                            TikTokActivity.start(itemView.getContext(), mPosition);
-                            break;
-                        case R.id.impl_vertical_view_pager: //VerticalViewPager
-                            TikTok2Activity.start(itemView.getContext(), mPosition);
-                            break;
-                        case R.id.impl_view_pager_2: //ViewPager2
-                            TikTok3Activity.start(itemView.getContext(), mPosition);
-                            break;
-                    }
+            itemView.setOnClickListener(v -> {
+                if (mId == R.id.impl_recycler_view) { //RecyclerView
+                    TikTokActivity.start(itemView.getContext(), mPosition);
+                } else if (mId == R.id.impl_vertical_view_pager) { //VerticalViewPager
+                    TikTok2Activity.start(itemView.getContext(), mPosition);
+                } else if (mId == R.id.impl_view_pager_2) { //ViewPager2
+                    TikTok3Activity.start(itemView.getContext(), mPosition);
                 }
             });
         }

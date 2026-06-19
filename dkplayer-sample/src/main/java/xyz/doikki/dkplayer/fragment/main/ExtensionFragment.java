@@ -3,6 +3,8 @@ package xyz.doikki.dkplayer.fragment.main;
 import android.content.Intent;
 import android.view.View;
 
+import androidx.media3.common.util.UnstableApi;
+
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.activity.api.PlayerActivity;
 import xyz.doikki.dkplayer.activity.extend.ADActivity;
@@ -17,6 +19,9 @@ import xyz.doikki.dkplayer.activity.extend.PlayListActivity;
 import xyz.doikki.dkplayer.fragment.BaseFragment;
 import xyz.doikki.dkplayer.util.DataUtil;
 
+/**
+ * Modified by LKY-Lockee on 2026/6/22
+ */
 public class ExtensionFragment extends BaseFragment implements View.OnClickListener {
     @Override
     protected int getLayoutResId() {
@@ -38,39 +43,30 @@ public class ExtensionFragment extends BaseFragment implements View.OnClickListe
         findViewById(R.id.btn_custom_render_view).setOnClickListener(this);
     }
 
+    @UnstableApi
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_fullscreen:
-                startActivity(new Intent(getActivity(), FullScreenActivity.class));
-                break;
-            case R.id.btn_danmu:
-                startActivity(new Intent(getActivity(), DanmakuActivity.class));
-                break;
-            case R.id.btn_ad:
-                startActivity(new Intent(getActivity(), ADActivity.class));
-                break;
-            case R.id.btn_proxy_cache:
-                startActivity(new Intent(getActivity(), CacheActivity.class));
-                break;
-            case R.id.btn_play_list:
-                startActivity(new Intent(getActivity(), PlayListActivity.class));
-                break;
-            case R.id.btn_pad:
-                startActivity(new Intent(getActivity(), PadActivity.class));
-                break;
-            case R.id.btn_custom_exo_player:
-                startActivity(new Intent(getActivity(), CustomExoPlayerActivity.class));
-                break;
-            case R.id.btn_custom_ijk_player:
-                startActivity(new Intent(getActivity(), CustomIjkPlayerActivity.class));
-                break;
-            case R.id.btn_definition:
-                startActivity(new Intent(getActivity(), DefinitionPlayerActivity.class));
-                break;
-            case R.id.btn_custom_render_view:
-                PlayerActivity.start(getActivity(), DataUtil.SAMPLE_URL, getString(R.string.str_custom_render_view), false, true);
-                break;
+        int id = v.getId();
+        if (id == R.id.btn_fullscreen) {
+            startActivity(new Intent(getActivity(), FullScreenActivity.class));
+        } else if (id == R.id.btn_danmu) {
+            startActivity(new Intent(getActivity(), DanmakuActivity.class));
+        } else if (id == R.id.btn_ad) {
+            startActivity(new Intent(getActivity(), ADActivity.class));
+        } else if (id == R.id.btn_proxy_cache) {
+            startActivity(new Intent(getActivity(), CacheActivity.class));
+        } else if (id == R.id.btn_play_list) {
+            startActivity(new Intent(getActivity(), PlayListActivity.class));
+        } else if (id == R.id.btn_pad) {
+            startActivity(new Intent(getActivity(), PadActivity.class));
+        } else if (id == R.id.btn_custom_exo_player) {
+            startActivity(new Intent(getActivity(), CustomExoPlayerActivity.class));
+        } else if (id == R.id.btn_custom_ijk_player) {
+            startActivity(new Intent(getActivity(), CustomIjkPlayerActivity.class));
+        } else if (id == R.id.btn_definition) {
+            startActivity(new Intent(getActivity(), DefinitionPlayerActivity.class));
+        } else if (id == R.id.btn_custom_render_view) {
+            PlayerActivity.start(requireActivity(), DataUtil.SAMPLE_URL, getString(R.string.str_custom_render_view), false, true);
         }
     }
 }

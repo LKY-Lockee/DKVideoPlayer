@@ -3,33 +3,34 @@ package xyz.doikki.dkplayer.widget.render.gl2.filter;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.opengl.GLES20;
+import android.os.Build;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.LinkedList;
 
-
+/**
+ * Modified by LKY-Lockee on 2026/6/22
+ */
 public class GlToneCurveFilter extends GlFilter {
 
-    private final static String FRAGMENT_SHADER =
-            "precision mediump float;\n" +
-                    " varying highp vec2 vTextureCoord;\n" +
-                    " uniform lowp sampler2D sTexture;\n" +
-                    " uniform mediump sampler2D toneCurveTexture;\n" +
-                    "\n" +
-                    " void main()\n" +
-                    " {\n" +
-                    "     lowp vec4 textureColor = texture2D(sTexture, vTextureCoord);\n" +
-                    "     lowp float redCurveValue = texture2D(toneCurveTexture, vec2(textureColor.r, 0.0)).r;\n" +
-                    "     lowp float greenCurveValue = texture2D(toneCurveTexture, vec2(textureColor.g, 0.0)).g;\n" +
-                    "     lowp float blueCurveValue = texture2D(toneCurveTexture, vec2(textureColor.b, 0.0)).b;\n" +
-                    "\n" +
-                    "     gl_FragColor = vec4(redCurveValue, greenCurveValue, blueCurveValue, textureColor.a);\n" +
-                    " }";
+    private final static String FRAGMENT_SHADER = "precision mediump float;\n" +
+            " varying highp vec2 vTextureCoord;\n" +
+            " uniform lowp sampler2D sTexture;\n" +
+            " uniform mediump sampler2D toneCurveTexture;\n" +
+            "\n" +
+            " void main()\n" +
+            " {\n" +
+            "     lowp vec4 textureColor = texture2D(sTexture, vTextureCoord);\n" +
+            "     lowp float redCurveValue = texture2D(toneCurveTexture, vec2(textureColor.r, 0.0)).r;\n" +
+            "     lowp float greenCurveValue = texture2D(toneCurveTexture, vec2(textureColor.g, 0.0)).g;\n" +
+            "     lowp float blueCurveValue = texture2D(toneCurveTexture, vec2(textureColor.b, 0.0)).b;\n" +
+            "\n" +
+            "     gl_FragColor = vec4(redCurveValue, greenCurveValue, blueCurveValue, textureColor.a);\n" +
+            " }";
 
     private PointF[] rgbCompositeControlPoints;
     private PointF[] redControlPoints;
@@ -101,7 +102,7 @@ public class GlToneCurveFilter extends GlFilter {
             int version = readShort(input);
             int totalCurves = readShort(input);
 
-            ArrayList<PointF[]> curves = new ArrayList<PointF[]>(totalCurves);
+            ArrayList<PointF[]> curves = new ArrayList<>(totalCurves);
             float pointRate = 1.0f / 255;
 
             for (int i = 0; i < totalCurves; i++) {
@@ -169,24 +170,22 @@ public class GlToneCurveFilter extends GlFilter {
     }
 
     private void updateToneCurveTexture() {
-        runOnDraw(new Runnable() {
-            @Override
-            public void run() {
-                GLES20.glActiveTexture(GLES20.GL_TEXTURE1);
-                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textures[0]);
+        runOnDraw(() -> {
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE1);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textures[0]);
 
-                if ((redCurve.size() >= 256) && (greenCurve.size() >= 256) && (blueCurve.size() >= 256) && (rgbCompositeCurve.size() >= 256)) {
-                    toneCurveByteArray = new byte[256 * 4];
-                    for (int currentCurveIndex = 0; currentCurveIndex < 256; currentCurveIndex++) {
-                        // BGRA for upload to texture
-                        toneCurveByteArray[currentCurveIndex * 4 + 2] = (byte) ((int) Math.min(Math.max(currentCurveIndex + blueCurve.get(currentCurveIndex) + rgbCompositeCurve.get(currentCurveIndex), 0), 255) & 0xff);
-                        toneCurveByteArray[currentCurveIndex * 4 + 1] = (byte) ((int) Math.min(Math.max(currentCurveIndex + greenCurve.get(currentCurveIndex) + rgbCompositeCurve.get(currentCurveIndex), 0), 255) & 0xff);
-                        toneCurveByteArray[currentCurveIndex * 4] = (byte) ((int) Math.min(Math.max(currentCurveIndex + redCurve.get(currentCurveIndex) + rgbCompositeCurve.get(currentCurveIndex), 0), 255) & 0xff);
-                        toneCurveByteArray[currentCurveIndex * 4 + 3] = (byte) (255 & 0xff);
-                    }
-
-                    GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, 256 /*width*/, 1 /*height*/, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, ByteBuffer.wrap(toneCurveByteArray));
+            if ((redCurve.size() >= 256) && (greenCurve.size() >= 256) && (blueCurve.size() >= 256) && (rgbCompositeCurve.size() >= 256)) {
+                toneCurveByteArray = new byte[256 * 4];
+                for (int currentCurveIndex = 0; currentCurveIndex < 256; currentCurveIndex++) {
+                    // BGRA for upload to texture
+                    toneCurveByteArray[currentCurveIndex * 4 + 2] = (byte) ((int) Math.min(Math.max(currentCurveIndex + blueCurve.get(currentCurveIndex) + rgbCompositeCurve.get(currentCurveIndex), 0), 255) & 0xff);
+                    toneCurveByteArray[currentCurveIndex * 4 + 1] = (byte) ((int) Math.min(Math.max(currentCurveIndex + greenCurve.get(currentCurveIndex) + rgbCompositeCurve.get(currentCurveIndex), 0), 255) & 0xff);
+                    toneCurveByteArray[currentCurveIndex * 4] = (byte) ((int) Math.min(Math.max(currentCurveIndex + redCurve.get(currentCurveIndex) + rgbCompositeCurve.get(currentCurveIndex), 0), 255) & 0xff);
+                    toneCurveByteArray[currentCurveIndex * 4 + 3] = (byte) (0xff);
                 }
+
+                GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, 256 /*width*/, 1 /*height*/, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, ByteBuffer.wrap(toneCurveByteArray));
+            }
 //        Buffer pixels!
 //        GLES20.glTexImage2D(int target,
 //            int level,
@@ -197,29 +196,17 @@ public class GlToneCurveFilter extends GlFilter {
 //            int format,
 //            int type,
 //            java.nio.Buffer pixels);
-            }
         });
     }
 
     private ArrayList<Float> createSplineCurve(PointF[] points) {
-        if (points == null || points.length <= 0) {
+        if (points == null || points.length == 0) {
             return null;
         }
 
         // Sort the array
         PointF[] pointsSorted = points.clone();
-        Arrays.sort(pointsSorted, new Comparator<PointF>() {
-            @Override
-            public int compare(PointF point1, PointF point2) {
-                if (point1.x < point2.x) {
-                    return -1;
-                } else if (point1.x > point2.x) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            }
-        });
+        Arrays.sort(pointsSorted, (point1, point2) -> Float.compare(point1.x, point2.x));
 
         // Convert toAndroidFormat (0, 1) to (0, 255).
         Point[] convertedPoints = new Point[pointsSorted.length];
@@ -229,18 +216,35 @@ public class GlToneCurveFilter extends GlFilter {
         }
 
         ArrayList<Point> splinePoints = createSplineCurve2(convertedPoints);
+        if (splinePoints == null) {
+            return null;
+        }
 
         // If we have a first point like (0.3, 0) we'll be missing some points at the beginning
         // that should be 0.
-        Point firstSplinePoint = splinePoints.get(0);
+        Point firstSplinePoint;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            firstSplinePoint = splinePoints.getFirst();
+        } else {
+            firstSplinePoint = splinePoints.get(0);
+        }
         if (firstSplinePoint.x > 0) {
             for (int i = firstSplinePoint.x; i >= 0; i--) {
-                splinePoints.add(0, new Point(i, 0));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                    splinePoints.addFirst(new Point(i, 0));
+                } else {
+                    splinePoints.add(0, new Point(i, 0));
+                }
             }
         }
 
         // Insert points similarly at the end, if necessary.
-        Point lastSplinePoint = splinePoints.get(splinePoints.size() - 1);
+        Point lastSplinePoint;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            lastSplinePoint = splinePoints.getLast();
+        } else {
+            lastSplinePoint = splinePoints.get(splinePoints.size() - 1);
+        }
         if (lastSplinePoint.x < 255) {
             for (int i = lastSplinePoint.x + 1; i <= 255; i++) {
                 splinePoints.add(new Point(i, 255));
@@ -248,7 +252,7 @@ public class GlToneCurveFilter extends GlFilter {
         }
 
         // Prepare the spline points.
-        ArrayList<Float> preparedSplinePoints = new ArrayList<Float>(splinePoints.size());
+        ArrayList<Float> preparedSplinePoints = new ArrayList<>(splinePoints.size());
         for (Point newPoint : splinePoints) {
             Point origPoint = new Point(newPoint.x, newPoint.x);
 
@@ -266,6 +270,9 @@ public class GlToneCurveFilter extends GlFilter {
 
     private ArrayList<Point> createSplineCurve2(Point[] points) {
         ArrayList<Double> sdA = createSecondDerivative(points);
+        if (sdA == null) {
+            return null;
+        }
 
         // Is [points count] equal to [sdA count]?
 //    int n = [points count];
@@ -281,7 +288,7 @@ public class GlToneCurveFilter extends GlFilter {
         }
 
 
-        ArrayList<Point> output = new ArrayList<Point>(n + 1);
+        ArrayList<Point> output = new ArrayList<>(n + 1);
 
         for (int i = 0; i < n - 1; i++) {
             Point cur = points[i];
@@ -291,10 +298,9 @@ public class GlToneCurveFilter extends GlFilter {
                 double t = (double) (x - cur.x) / (next.x - cur.x);
 
                 double a = 1 - t;
-                double b = t;
                 double h = next.x - cur.x;
 
-                double y = a * cur.y + b * next.y + (h * h / 6) * ((a * a * a - a) * sd[i] + (b * b * b - b) * sd[i + 1]);
+                double y = a * cur.y + t * next.y + (h * h / 6) * ((a * a * a - a) * sd[i] + (t * t * t - t) * sd[i + 1]);
 
                 if (y > 255.0) {
                     y = 255.0;
@@ -361,7 +367,7 @@ public class GlToneCurveFilter extends GlFilter {
             result[i] -= k * result[i + 1];
         }
 
-        ArrayList<Double> output = new ArrayList<Double>(n);
+        ArrayList<Double> output = new ArrayList<>(n);
         for (int i = 0; i < n; i++) output.add(result[i] / matrix[i][1]);
 
         return output;

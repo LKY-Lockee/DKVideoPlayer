@@ -10,12 +10,14 @@ import xyz.doikki.videoplayer.player.VideoView;
 
 /**
  * 全屏后手动横屏，并不完美，仅做参考
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 public class RecyclerViewPortraitFragment extends RecyclerViewAutoPlayFragment {
 
     @Override
     protected void initVideoView() {
-        mVideoView = new VideoView(getActivity());
+        mVideoView = new VideoView(requireActivity());
         mVideoView.setOnStateChangeListener(new VideoView.SimpleOnStateChangeListener() {
             @Override
             public void onPlayStateChanged(int playState) {
@@ -26,14 +28,14 @@ public class RecyclerViewPortraitFragment extends RecyclerViewAutoPlayFragment {
                 }
             }
         });
-        mController = new PortraitWhenFullScreenController(getActivity());
-        mErrorView = new ErrorView(getActivity());
+        mController = new PortraitWhenFullScreenController(requireActivity());
+        mErrorView = new ErrorView(requireActivity());
         mController.addControlComponent(mErrorView);
-        mCompleteView = new CompleteView(getActivity());
+        mCompleteView = new CompleteView(requireActivity());
         mController.addControlComponent(mCompleteView);
-        mTitleView = new TitleView(getActivity());
+        mTitleView = new TitleView(requireActivity());
         mController.addControlComponent(mTitleView);
-        mController.addControlComponent(new GestureView(getActivity()));
+        mController.addControlComponent(new GestureView(requireActivity()));
         mController.setEnableOrientation(true);
         mVideoView.setVideoController(mController);
     }

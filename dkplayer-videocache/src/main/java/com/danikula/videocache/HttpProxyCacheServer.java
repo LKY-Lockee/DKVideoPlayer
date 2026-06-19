@@ -1,5 +1,8 @@
 package com.danikula.videocache;
 
+import static com.danikula.videocache.Preconditions.checkAllNotNull;
+import static com.danikula.videocache.Preconditions.checkNotNull;
+
 import android.content.Context;
 import android.net.Uri;
 
@@ -26,9 +29,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static com.danikula.videocache.Preconditions.checkAllNotNull;
-import static com.danikula.videocache.Preconditions.checkNotNull;
-
 /**
  * Simple lightweight proxy server with file caching support that handles HTTP requests.
  * Typical usage:
@@ -47,6 +47,8 @@ import static com.danikula.videocache.Preconditions.checkNotNull;
  * </code></pre>
  *
  * @author Alexey Danilov (danikula@gmail.com).
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 public class HttpProxyCacheServer {
 
@@ -82,7 +84,7 @@ public class HttpProxyCacheServer {
     }
 
     /**
-     * Returns url that wrap original url and should be used for client (MediaPlayer, ExoPlayer, etc).
+     * Returns url that wrap original url and should be used for client (MediaPlayer, ExoPlayer, etc.).
      * <p>
      * If file for this url is fully cached (it means method {@link #isCached(String)} returns {@code true})
      * then file:// uri to cached file will be returned.
@@ -97,7 +99,7 @@ public class HttpProxyCacheServer {
     }
 
     /**
-     * Returns url that wrap original url and should be used for client (MediaPlayer, ExoPlayer, etc).
+     * Returns url that wrap original url and should be used for client (MediaPlayer, ExoPlayer, etc.).
      * <p>
      * If parameter {@code allowCachedFileUri} is {@code true} and file for this url is fully cached
      * (it means method {@link #isCached(String)} returns {@code true}) then file:// uri to cached file will be returned.
@@ -118,22 +120,14 @@ public class HttpProxyCacheServer {
     public void registerCacheListener(CacheListener cacheListener, String url) {
         checkAllNotNull(cacheListener, url);
         synchronized (clientsLock) {
-            try {
-                getClients(url).registerCacheListener(cacheListener);
-            } catch (ProxyCacheException e) {
-                Logger.warn("Error registering cache listener");
-            }
+            getClients(url).registerCacheListener(cacheListener);
         }
     }
 
     public void unregisterCacheListener(CacheListener cacheListener, String url) {
         checkAllNotNull(cacheListener, url);
         synchronized (clientsLock) {
-            try {
-                getClients(url).unregisterCacheListener(cacheListener);
-            } catch (ProxyCacheException e) {
-                Logger.warn("Error registering cache listener");
-            }
+            getClients(url).unregisterCacheListener(cacheListener);
         }
     }
 
@@ -149,7 +143,7 @@ public class HttpProxyCacheServer {
     /**
      * Checks is cache contains fully cached file for particular url.
      *
-     * @param url an url cache file will be checked for.
+     * @param url a url cache file will be checked for.
      * @return {@code true} if cache contains fully cached file for passed in parameters url.
      */
     public boolean isCached(String url) {
@@ -230,11 +224,9 @@ public class HttpProxyCacheServer {
             String url = ProxyCacheUtils.decode(request.uri);
             HttpProxyCacheServerClients clients = getClients(url);
             clients.processRequest(request, socket);
-        } catch (SocketException e) {
-            // There is no way to determine that client closed connection http://stackoverflow.com/a/10241044/999458
-            // So just to prevent log flooding don't log stacktrace
-            Logger.debug("Closing socket… Socket is closed by client.");
-        } catch (ProxyCacheException | IOException e) {
+        } // There is no way to determine that client closed connection http://stackoverflow.com/a/10241044/999458
+        // So just to prevent log flooding don't log stacktrace
+        catch (ProxyCacheException | IOException e) {
             onError(new ProxyCacheException("Error processing request", e));
         } finally {
             releaseSocket(socket);
@@ -242,7 +234,7 @@ public class HttpProxyCacheServer {
         }
     }
 
-    private HttpProxyCacheServerClients getClients(String url) throws ProxyCacheException {
+    private HttpProxyCacheServerClients getClients(String url) {
         synchronized (clientsLock) {
             HttpProxyCacheServerClients clients = clientsMap.get(url);
             if (clients == null) {
@@ -346,7 +338,7 @@ public class HttpProxyCacheServer {
         private File cacheRoot;
         private FileNameGenerator fileNameGenerator;
         private DiskUsage diskUsage;
-        private SourceInfoStorage sourceInfoStorage;
+        private final SourceInfoStorage sourceInfoStorage;
         private HeaderInjector headerInjector;
 
         public Builder(Context context) {
@@ -360,7 +352,7 @@ public class HttpProxyCacheServer {
         /**
          * Overrides default cache folder to be used for caching files.
          * <p>
-         * By default AndroidVideoCache uses
+         * By default, AndroidVideoCache uses
          * '/Android/data/[app_package_name]/cache/video-cache/' if card is mounted and app has appropriate permission
          * or 'video-cache' subdirectory in default application's cache directory otherwise.
          * </p>

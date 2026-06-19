@@ -12,30 +12,30 @@ import android.opengl.GLES20;
 
 import java.util.HashMap;
 
-import xyz.doikki.dkplayer.widget.render.gl2.GLFramebufferObject;
 import xyz.doikki.dkplayer.widget.render.gl2.EglUtil;
+import xyz.doikki.dkplayer.widget.render.gl2.GLFramebufferObject;
 
+/**
+ * Modified by LKY-Lockee on 2026/6/22
+ */
 public class GlFilter {
 
     public static final String DEFAULT_UNIFORM_SAMPLER = "sTexture";
 
+    protected static final String DEFAULT_VERTEX_SHADER = "attribute vec4 aPosition;\n" +
+            "attribute vec4 aTextureCoord;\n" +
+            "varying highp vec2 vTextureCoord;\n" +
+            "void main() {\n" +
+            "gl_Position = aPosition;\n" +
+            "vTextureCoord = aTextureCoord.xy;\n" +
+            "}\n";
 
-    protected static final String DEFAULT_VERTEX_SHADER =
-            "attribute vec4 aPosition;\n" +
-                    "attribute vec4 aTextureCoord;\n" +
-                    "varying highp vec2 vTextureCoord;\n" +
-                    "void main() {\n" +
-                    "gl_Position = aPosition;\n" +
-                    "vTextureCoord = aTextureCoord.xy;\n" +
-                    "}\n";
-
-    protected static final String DEFAULT_FRAGMENT_SHADER =
-            "precision mediump float;\n" +
-                    "varying highp vec2 vTextureCoord;\n" +
-                    "uniform lowp sampler2D sTexture;\n" +
-                    "void main() {\n" +
-                    "gl_FragColor = texture2D(sTexture, vTextureCoord);\n" +
-                    "}\n";
+    protected static final String DEFAULT_FRAGMENT_SHADER = "precision mediump float;\n" +
+            "varying highp vec2 vTextureCoord;\n" +
+            "uniform lowp sampler2D sTexture;\n" +
+            "void main() {\n" +
+            "gl_FragColor = texture2D(sTexture, vTextureCoord);\n" +
+            "}\n";
 
 
     private static final float[] VERTICES_DATA = new float[]{
@@ -50,7 +50,7 @@ public class GlFilter {
     protected static final int VERTICES_DATA_POS_SIZE = 3;
     protected static final int VERTICES_DATA_UV_SIZE = 2;
     protected static final int VERTICES_DATA_STRIDE_BYTES = (VERTICES_DATA_POS_SIZE + VERTICES_DATA_UV_SIZE) * FLOAT_SIZE_BYTES;
-    protected static final int VERTICES_DATA_POS_OFFSET = 0 * FLOAT_SIZE_BYTES;
+    protected static final int VERTICES_DATA_POS_OFFSET = 0;
     protected static final int VERTICES_DATA_UV_OFFSET = VERTICES_DATA_POS_OFFSET + VERTICES_DATA_POS_SIZE * FLOAT_SIZE_BYTES;
 
     private final String vertexShaderSource;
@@ -63,7 +63,7 @@ public class GlFilter {
 
     private int vertexBufferName;
 
-    private final HashMap<String, Integer> handleMap = new HashMap<String, Integer>();
+    private final HashMap<String, Integer> handleMap = new HashMap<>();
 
     public GlFilter() {
         this(DEFAULT_VERTEX_SHADER, DEFAULT_FRAGMENT_SHADER);
@@ -140,7 +140,7 @@ public class GlFilter {
     protected final int getHandle(final String name) {
         final Integer value = handleMap.get(name);
         if (value != null) {
-            return value.intValue();
+            return value;
         }
 
         int location = glGetAttribLocation(program, name);
@@ -150,7 +150,7 @@ public class GlFilter {
         if (location == -1) {
             throw new IllegalStateException("Could not get attrib or uniform location for " + name);
         }
-        handleMap.put(name, Integer.valueOf(location));
+        handleMap.put(name, location);
         return location;
     }
 

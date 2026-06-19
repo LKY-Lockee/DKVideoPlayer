@@ -25,6 +25,9 @@ import xyz.doikki.videoplayer.util.L;
 /**
  * 模仿抖音短视频, 使用RecyclerView实现
  * Created by Doikki on 2018/1/6.
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
+ *
  * @deprecated 推荐 {@link TikTok2Activity}
  */
 @Deprecated
@@ -33,7 +36,7 @@ public class TikTokActivity extends BaseActivity<VideoView> {
     private TikTokController mController;
     private int mCurPos;
     private RecyclerView mRecyclerView;
-    private List<TiktokBean> mVideoList = new ArrayList<>();
+    private final List<TiktokBean> mVideoList = new ArrayList<>();
     private TikTokAdapter mTikTokAdapter;
 
     private static final String KEY_INDEX = "index";

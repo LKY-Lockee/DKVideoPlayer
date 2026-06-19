@@ -2,7 +2,7 @@ package xyz.doikki.dkplayer.activity.list.tiktok;
 
 /**
  * Created by 钉某人
- * github: https://github.com/DingMouRen
+ * GitHub: <a href="https://github.com/DingMouRen">...</a>
  * email: naildingmouren@gmail.com
  * 用于ViewPagerLayoutManager的监听
  */

@@ -3,7 +3,6 @@ package xyz.doikki.dkplayer.widget.render.gl2.filter;
 import android.opengl.GLES20;
 
 
-
 public class GlVignetteFilter extends GlFilter {
 
     private static final String FRAGMENT_SHADER =
@@ -49,7 +48,7 @@ public class GlVignetteFilter extends GlFilter {
         this.vignetteEnd = vignetteEnd;
     }
 
-    //////////////////////////////////////////////////////////////////////////
+    /// ///////////////////////////////////////////////////////////////////////
 
     @Override
     public void onDraw() {

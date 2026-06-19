@@ -1,6 +1,6 @@
 package xyz.doikki.dkplayer.app;
 
-import androidx.multidex.MultiDexApplication;
+import android.app.Application;
 
 import com.danikula.videocache.Logger;
 
@@ -12,9 +12,10 @@ import xyz.doikki.videoplayer.player.VideoViewManager;
 /**
  * app
  * Created by doikki on 2017/4/22.
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
-
-public class MyApplication extends MultiDexApplication {
+public class MyApplication extends Application {
 
     private static MyApplication instance;
 
@@ -25,10 +26,10 @@ public class MyApplication extends MultiDexApplication {
         //播放器配置，注意：此为全局配置，按需开启
         VideoViewManager.setConfig(VideoViewConfig.newBuilder()
                 .setLogEnabled(BuildConfig.DEBUG) //调试的时候请打开日志，方便排错
-                /** 软解，支持格式较多，可通过自编译so扩展格式，结合 {@link xyz.doikki.dkplayer.widget.videoview.IjkVideoView} 使用更佳 */
+                // 软解，支持格式较多，可通过自编译so扩展格式，结合 {@link xyz.doikki.dkplayer.widget.videoview.IjkVideoView} 使用更佳
 //                .setPlayerFactory(IjkPlayerFactory.create())
 //                .setPlayerFactory(AndroidMediaPlayerFactory.create()) //不推荐使用，兼容性较差
-                /** 硬解，支持格式看手机，请使用CpuInfoActivity检查手机支持的格式，结合 {@link xyz.doikki.dkplayer.widget.videoview.ExoVideoView} 使用更佳 */
+                // 硬解，支持格式看手机，请使用CpuInfoActivity检查手机支持的格式，结合 {@link xyz.doikki.dkplayer.widget.videoview.ExoVideoView} 使用更佳
                 .setPlayerFactory(ExoMediaPlayerFactory.create())
                 // 设置自己的渲染view，内部默认TextureView实现
 //                .setRenderViewFactory(SurfaceRenderViewFactory.create())

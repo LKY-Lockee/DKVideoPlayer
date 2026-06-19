@@ -1,5 +1,6 @@
 package xyz.doikki.dkplayer.widget.component;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -29,6 +30,9 @@ import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.util.L;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 
+/**
+ * Modified by LKY-Lockee on 2026/6/22
+ */
 public class DefinitionControlView extends VodControlView {
 
     private final TextView mDefinition;
@@ -63,12 +67,7 @@ public class DefinitionControlView extends VodControlView {
         mPopupWindow.setOutsideTouchable(true);
         mPopupWindow.setClippingEnabled(false);
         mDefinition = findViewById(R.id.tv_definition);
-        mDefinition.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showRateMenu();
-            }
-        });
+        mDefinition.setOnClickListener(v -> showRateMenu());
     }
 
     private void showRateMenu() {
@@ -112,7 +111,7 @@ public class DefinitionControlView extends VodControlView {
             while (iterator.hasPrevious()) {//反向遍历
                 Map.Entry<String, String> entry = iterator.previous();
                 mRateStr.add(entry.getKey());
-                TextView rateItem = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.layout_rate_item, null);
+                @SuppressLint("InflateParams") TextView rateItem = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.layout_rate_item, null);
                 rateItem.setText(entry.getKey());
                 rateItem.setTag(index);
                 rateItem.setOnClickListener(rateOnClickListener);

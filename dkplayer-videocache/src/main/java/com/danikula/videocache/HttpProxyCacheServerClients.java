@@ -1,8 +1,12 @@
 package com.danikula.videocache;
 
+import static com.danikula.videocache.Preconditions.checkNotNull;
+
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+
+import androidx.annotation.NonNull;
 
 import com.danikula.videocache.file.FileCache;
 
@@ -13,12 +17,12 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.danikula.videocache.Preconditions.checkNotNull;
-
 /**
  * Client for {@link HttpProxyCacheServer}
  *
  * @author Alexey Danilov (danikula@gmail.com).
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 final class HttpProxyCacheServerClients {
 
@@ -106,7 +110,7 @@ final class HttpProxyCacheServerClients {
         }
 
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(@NonNull Message msg) {
             for (CacheListener cacheListener : listeners) {
                 cacheListener.onCacheAvailable((File) msg.obj, url, msg.arg1);
             }

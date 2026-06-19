@@ -1,13 +1,10 @@
 package xyz.doikki.dkplayer.fragment.list;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.transition.Transition;
 import android.view.View;
 
-import androidx.annotation.RequiresApi;
-import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
 
 import xyz.doikki.dkplayer.R;
@@ -21,15 +18,12 @@ import xyz.doikki.videoplayer.player.VideoView;
 
 /**
  * 无缝播放
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 public class SeamlessPlayFragment extends RecyclerViewAutoPlayFragment {
 
     private boolean mSkipToDetail;
-
-    @Override
-    protected int getLayoutResId() {
-        return R.layout.fragment_recycler_view;
-    }
 
     @Override
     protected void initView() {
@@ -58,11 +52,14 @@ public class SeamlessPlayFragment extends RecyclerViewAutoPlayFragment {
                 mCurPos = position;
             }
             intent.putExtras(bundle);
-            View sharedView = mLinearLayoutManager.findViewByPosition(position).findViewById(R.id.player_container);
-            //使用共享元素动画
-            ActivityOptionsCompat options = ActivityOptionsCompat
-                    .makeSceneTransitionAnimation(getActivity(), sharedView, DetailActivity.VIEW_NAME_PLAYER_CONTAINER);
-            ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
+            View itemView = mLinearLayoutManager.findViewByPosition(position);
+            if (itemView != null) {
+                View sharedView = itemView.findViewById(R.id.player_container);
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity(), sharedView, DetailActivity.VIEW_NAME_PLAYER_CONTAINER);
+                requireActivity().startActivity(intent, options.toBundle());
+            } else {
+                requireActivity().startActivity(intent);
+            }
         });
     }
 
@@ -91,14 +88,13 @@ public class SeamlessPlayFragment extends RecyclerViewAutoPlayFragment {
     @Override
     public void onStart() {
         super.onStart();
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP || !addTransitionListener()) {
+        if (!addTransitionListener()) {
             restoreVideoView();
         }
     }
 
-    @RequiresApi(21)
     private boolean addTransitionListener() {
-        final Transition transition = getActivity().getWindow().getSharedElementExitTransition();
+        final Transition transition = requireActivity().getWindow().getSharedElementExitTransition();
         if (transition != null) {
             transition.addListener(new Transition.TransitionListener() {
                 @Override
@@ -133,6 +129,7 @@ public class SeamlessPlayFragment extends RecyclerViewAutoPlayFragment {
     private void restoreVideoView() {
         //还原播放器
         View itemView = mLinearLayoutManager.findViewByPosition(mCurPos);
+        if (itemView == null) return;
         VideoRecyclerViewAdapter.VideoHolder viewHolder = (VideoRecyclerViewAdapter.VideoHolder) itemView.getTag();
         mVideoView = getVideoViewManager().get(Tag.SEAMLESS);
         Utils.removeViewFormParent(mVideoView);
@@ -142,11 +139,6 @@ public class SeamlessPlayFragment extends RecyclerViewAutoPlayFragment {
         mController.setPlayState(mVideoView.getCurrentPlayState());
         mController.setPlayerState(mVideoView.getCurrentPlayerState());
 
-        mRecyclerView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mVideoView.setVideoController(mController);
-            }
-        }, 100);
+        mRecyclerView.postDelayed(() -> mVideoView.setVideoController(mController), 100);
     }
 }

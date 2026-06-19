@@ -1,5 +1,9 @@
 package com.danikula.videocache;
 
+import static com.danikula.videocache.Preconditions.checkArgument;
+import static com.danikula.videocache.Preconditions.checkNotNull;
+
+import android.os.Build;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
@@ -8,17 +12,17 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-
-import static com.danikula.videocache.Preconditions.checkArgument;
-import static com.danikula.videocache.Preconditions.checkNotNull;
 
 /**
  * Just simple utils.
  *
  * @author Alexey Danilov (danikula@gmail.com).
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 public class ProxyCacheUtils {
 
@@ -48,18 +52,28 @@ public class ProxyCacheUtils {
     }
 
     static String encode(String url) {
-        try {
-            return URLEncoder.encode(url, "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Error encoding url", e);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            return URLEncoder.encode(url, StandardCharsets.UTF_8);
+        } else {
+            try {
+                //noinspection CharsetObjectCanBeUsed
+                return URLEncoder.encode(url, "utf-8");
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException("Error encoding url", e);
+            }
         }
     }
 
     static String decode(String url) {
-        try {
-            return URLDecoder.decode(url, "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Error decoding url", e);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            return URLDecoder.decode(url, StandardCharsets.UTF_8);
+        } else {
+            try {
+                //noinspection CharsetObjectCanBeUsed
+                return URLDecoder.decode(url, "utf-8");
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException("Error decoding url", e);
+            }
         }
     }
 
@@ -84,7 +98,7 @@ public class ProxyCacheUtils {
     }
 
     private static String bytesToHexString(byte[] bytes) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (byte b : bytes) {
             sb.append(String.format("%02x", b));
         }

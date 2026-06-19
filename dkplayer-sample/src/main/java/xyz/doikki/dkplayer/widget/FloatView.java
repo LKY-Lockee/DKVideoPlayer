@@ -3,7 +3,6 @@ package xyz.doikki.dkplayer.widget;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.PixelFormat;
-import android.os.Build;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
@@ -18,10 +17,11 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
 /**
  * 悬浮窗控件（解决滑动冲突）
  * Created by Doikki on 2017/6/8.
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
-
 @SuppressLint("ViewConstructor")
-public class FloatView extends FrameLayout{
+public class FloatView extends FrameLayout {
 
     private WindowManager mWindowManager;
     private WindowManager.LayoutParams mParams;
@@ -47,11 +47,7 @@ public class FloatView extends FrameLayout{
     private void initWindow() {
         mWindowManager = PlayerUtils.getWindowManager(getContext().getApplicationContext());
         mParams = new WindowManager.LayoutParams();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            mParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
-        }else {
-            mParams.type =  WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
-        }
+        mParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
         // 设置图片格式，效果为背景透明
         mParams.format = PixelFormat.TRANSLUCENT;
         mParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
@@ -70,22 +66,11 @@ public class FloatView extends FrameLayout{
      */
     public boolean addToWindow() {
         if (mWindowManager != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                if (!isAttachedToWindow()) {
-                    mWindowManager.addView(this, mParams);
-                    return true;
-                } else {
-                    return false;
-                }
+            if (!isAttachedToWindow()) {
+                mWindowManager.addView(this, mParams);
+                return true;
             } else {
-                try {
-                    if (getParent() == null) {
-                        mWindowManager.addView(this, mParams);
-                    }
-                    return true;
-                } catch (Exception e) {
-                    return false;
-                }
+                return false;
             }
         } else {
             return false;
@@ -97,22 +82,11 @@ public class FloatView extends FrameLayout{
      */
     public boolean removeFromWindow() {
         if (mWindowManager != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                if (isAttachedToWindow()) {
-                    mWindowManager.removeViewImmediate(this);
-                    return true;
-                } else {
-                    return false;
-                }
+            if (isAttachedToWindow()) {
+                mWindowManager.removeViewImmediate(this);
+                return true;
             } else {
-                try {
-                    if (getParent() != null) {
-                        mWindowManager.removeViewImmediate(this);
-                    }
-                    return true;
-                } catch (Exception e) {
-                    return false;
-                }
+                return false;
             }
         } else {
             return false;
@@ -124,8 +98,7 @@ public class FloatView extends FrameLayout{
         boolean intercepted = false;
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                intercepted = false;
-                mDownRawX = (int) ev.getRawX();
+                ev.getRawX();
                 mDownRawY = (int) ev.getRawY();
                 mDownX = (int) ev.getX();
                 mDownY = (int) (ev.getY() + PlayerUtils.getStatusBarHeight(getContext()));
@@ -142,14 +115,12 @@ public class FloatView extends FrameLayout{
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_MOVE:
-                int x = (int) event.getRawX();
-                int y = (int) event.getRawY();
-                mParams.x = x - mDownX;
-                mParams.y = y - mDownY;
-                mWindowManager.updateViewLayout(this, mParams);
-                break;
+        if (event.getAction() == MotionEvent.ACTION_MOVE) {
+            int x = (int) event.getRawX();
+            int y = (int) event.getRawY();
+            mParams.x = x - mDownX;
+            mParams.y = y - mDownY;
+            mWindowManager.updateViewLayout(this, mParams);
         }
         return super.onTouchEvent(event);
     }

@@ -1,5 +1,7 @@
 package xyz.doikki.dkplayer.activity.extend;
 
+import java.util.LinkedHashMap;
+
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.activity.BaseActivity;
 import xyz.doikki.dkplayer.widget.component.DefinitionControlView;
@@ -10,8 +12,6 @@ import xyz.doikki.videocontroller.component.GestureView;
 import xyz.doikki.videocontroller.component.PrepareView;
 import xyz.doikki.videocontroller.component.TitleView;
 import xyz.doikki.videoplayer.player.VideoView;
-
-import java.util.LinkedHashMap;
 
 /**
  * 清晰度切换

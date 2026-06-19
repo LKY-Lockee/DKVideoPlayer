@@ -7,8 +7,7 @@ import android.opengl.GLES20;
  */
 public class GlExposureFilter extends GlFilter {
 
-    private static final String EXPOSURE_FRAGMENT_SHADER = "" +
-            "precision mediump float;" +
+    private static final String EXPOSURE_FRAGMENT_SHADER = "precision mediump float;" +
             " varying vec2 vTextureCoord;\n" +
             " \n" +
             " uniform lowp sampler2D sTexture;\n" +

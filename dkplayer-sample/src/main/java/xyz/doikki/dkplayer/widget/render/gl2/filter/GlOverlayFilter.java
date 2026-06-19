@@ -8,9 +8,9 @@ import android.opengl.GLUtils;
 
 import xyz.doikki.dkplayer.widget.render.gl2.Resolution;
 
-
-
-
+/**
+ * Modified by LKY-Lockee on 2026/6/22
+ */
 public abstract class GlOverlayFilter extends GlFilter {
 
     private final int[] textures = new int[1];
@@ -23,17 +23,16 @@ public abstract class GlOverlayFilter extends GlFilter {
         super(DEFAULT_VERTEX_SHADER, FRAGMENT_SHADER);
     }
 
-    private final static String FRAGMENT_SHADER =
-            "precision mediump float;\n" +
-                    "varying vec2 vTextureCoord;\n" +
-                    "uniform lowp sampler2D sTexture;\n" +
-                    "uniform lowp sampler2D oTexture;\n" +
-                    "void main() {\n" +
-                    "   lowp vec4 textureColor = texture2D(sTexture, vTextureCoord);\n" +
-                    "   lowp vec4 textureColor2 = texture2D(oTexture, vTextureCoord);\n" +
-                    "   \n" +
-                    "   gl_FragColor = mix(textureColor, textureColor2, textureColor2.a);\n" +
-                    "}\n";
+    private final static String FRAGMENT_SHADER = "precision mediump float;\n" +
+            "varying vec2 vTextureCoord;\n" +
+            "uniform lowp sampler2D sTexture;\n" +
+            "uniform lowp sampler2D oTexture;\n" +
+            "void main() {\n" +
+            "   lowp vec4 textureColor = texture2D(sTexture, vTextureCoord);\n" +
+            "   lowp vec4 textureColor2 = texture2D(oTexture, vTextureCoord);\n" +
+            "   \n" +
+            "   gl_FragColor = mix(textureColor, textureColor2, textureColor2.a);\n" +
+            "}\n";
 
     public void setResolution(Resolution resolution) {
         this.inputResolution = resolution;
@@ -75,7 +74,7 @@ public abstract class GlOverlayFilter extends GlFilter {
 
         bitmap.eraseColor(Color.argb(0, 0, 0, 0));
         Canvas bitmapCanvas = new Canvas(bitmap);
-        bitmapCanvas.scale(1, -1, bitmapCanvas.getWidth() / 2, bitmapCanvas.getHeight() / 2);
+        bitmapCanvas.scale(1, -1, bitmapCanvas.getWidth() / 2f, bitmapCanvas.getHeight() / 2f);
         drawCanvas(bitmapCanvas);
 
         int offsetDepthMapTextureUniform = getHandle("oTexture");// 3
@@ -95,7 +94,6 @@ public abstract class GlOverlayFilter extends GlFilter {
     public static void releaseBitmap(Bitmap bitmap) {
         if (bitmap != null && !bitmap.isRecycled()) {
             bitmap.recycle();
-            bitmap = null;
         }
     }
 }

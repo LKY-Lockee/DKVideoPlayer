@@ -11,15 +11,18 @@ import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import xyz.doikki.videoplayer.util.PlayerUtils;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+import xyz.doikki.videoplayer.util.PlayerUtils;
+
 /**
  * CPU信息
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
+@SuppressWarnings("rawtypes")
 public class CpuInfoActivity extends BaseActivity {
 
     private TextView mCpuInfo;
@@ -67,25 +70,20 @@ public class CpuInfoActivity extends BaseActivity {
 
         sb.append("===== ABI =====\n\n");
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            String[] abis = Build.SUPPORTED_ABIS;
-            for (int i = 0; i < abis.length; i++) {
-                sb.append("CPU ABI").append(i).append(":").append(abis[i]).append("\n");
-            }
+        String[] abis = Build.SUPPORTED_ABIS;
+        for (int i = 0; i < abis.length; i++) {
+            sb.append("CPU ABI").append(i).append(":").append(abis[i]).append("\n");
         }
 
         sb.append("\n");
         sb.append("===== Codecs =====\n\n");
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            int numCodecs = MediaCodecList.getCodecCount();
-            for (int i = 0; i < numCodecs; i++) {
-                MediaCodecInfo codecInfo = MediaCodecList.getCodecInfoAt(i);
-                String[] types = codecInfo.getSupportedTypes();
-                for (String type : types) {
-                    sb.append(type).append("\n");
-                    sb.append(codecInfo.getName()).append("\n\n");
-                }
+        MediaCodecList codecList = new MediaCodecList(MediaCodecList.ALL_CODECS);
+        for (MediaCodecInfo codecInfo : codecList.getCodecInfos()) {
+            String[] types = codecInfo.getSupportedTypes();
+            for (String type : types) {
+                sb.append(type).append("\n");
+                sb.append(codecInfo.getName()).append("\n\n");
             }
         }
 

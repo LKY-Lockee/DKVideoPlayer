@@ -2,15 +2,18 @@ package xyz.doikki.dkplayer.util;
 
 import android.content.Context;
 
-import xyz.doikki.dkplayer.bean.TiktokBean;
-import xyz.doikki.dkplayer.bean.VideoBean;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import xyz.doikki.dkplayer.bean.TiktokBean;
+import xyz.doikki.dkplayer.bean.VideoBean;
+
+/**
+ * Modified by LKY-Lockee on 2026/6/22
+ */
 public class DataUtil {
 
     public static final String SAMPLE_URL = "http://vfx.mtime.cn/Video/2019/03/14/mp4/190314223540373995.mp4";
@@ -187,7 +190,7 @@ public class DataUtil {
                 byte[] buffer = new byte[length];
                 is.read(buffer);
                 is.close();
-                String result = new String(buffer, Charset.forName("UTF-8"));
+                String result = new String(buffer, StandardCharsets.UTF_8);
                 tiktokData = TiktokBean.arrayTiktokBeanFromData(result);
             }
             return tiktokData;

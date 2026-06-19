@@ -2,8 +2,6 @@ package xyz.doikki.dkplayer.widget.render.gl2.filter;
 
 import android.opengl.GLES20;
 
-
-
 public class GlToneFilter extends GlThreex3TextureSamplingFilter {
 
     private static final String FRAGMENT_SHADER =
@@ -57,7 +55,7 @@ public class GlToneFilter extends GlThreex3TextureSamplingFilter {
         super(FRAGMENT_SHADER);
     }
 
-    //////////////////////////////////////////////////////////////////////////
+    /// ///////////////////////////////////////////////////////////////////////
 
     public float getThreshold() {
         return threshold;
@@ -75,7 +73,7 @@ public class GlToneFilter extends GlThreex3TextureSamplingFilter {
         this.quantizationLevels = quantizationLevels;
     }
 
-    //////////////////////////////////////////////////////////////////////////
+    /// ///////////////////////////////////////////////////////////////////////
 
     @Override
     public void onDraw() {

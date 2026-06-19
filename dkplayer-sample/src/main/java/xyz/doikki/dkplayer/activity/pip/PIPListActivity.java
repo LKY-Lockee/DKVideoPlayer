@@ -3,12 +3,13 @@ package xyz.doikki.dkplayer.activity.pip;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.provider.Settings;
 import android.view.View;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,8 +35,10 @@ import xyz.doikki.videoplayer.player.VideoView;
 /**
  * 悬浮播放终极版
  * Created by Doikki on 2017/5/31.
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
-
+@SuppressWarnings("rawtypes")
 public class PIPListActivity extends BaseActivity implements OnItemChildClickListener {
 
     private PIPManager mPIPManager;
@@ -44,6 +47,23 @@ public class PIPListActivity extends BaseActivity implements OnItemChildClickLis
     private List<VideoBean> mVideos;
     private LinearLayoutManager mLinearLayoutManager;
     private TitleView mTitleView;
+
+    private final OnBackPressedCallback mBackPressedCallback = new OnBackPressedCallback(true) {
+        @Override
+        public void handleOnBackPressed() {
+            if (mPIPManager.onBackPress()) return;
+            setEnabled(false);
+            getOnBackPressedDispatcher().onBackPressed();
+            setEnabled(true);
+        }
+    };
+
+    private final ActivityResultLauncher<Intent> mOverlayPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (Settings.canDrawOverlays(PIPListActivity.this)) {
+                    mPIPManager.startFloatWindow();
+                }
+            });
 
     @Override
     protected int getTitleResId() {
@@ -61,6 +81,7 @@ public class PIPListActivity extends BaseActivity implements OnItemChildClickLis
         mVideoView = getVideoViewManager().get(Tag.PIP);
         mController = new StandardVideoController(this);
         addControlComponent();
+        getOnBackPressedDispatcher().addCallback(this, mBackPressedCallback);
 
         initRecyclerView();
     }
@@ -105,21 +126,11 @@ public class PIPListActivity extends BaseActivity implements OnItemChildClickLis
     }
 
     private void startFloatWindow() {
-        if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {
+        if (!Settings.canDrawOverlays(this)) {
             Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
-            startActivityForResult(intent, 10000);
+            mOverlayPermissionLauncher.launch(intent);
         } else {
             mPIPManager.startFloatWindow();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (requestCode == 10000 && Settings.canDrawOverlays(this)) {
-                mPIPManager.startFloatWindow();
-            }
         }
     }
 
@@ -139,13 +150,6 @@ public class PIPListActivity extends BaseActivity implements OnItemChildClickLis
     protected void onDestroy() {
         super.onDestroy();
         mPIPManager.reset();
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (mPIPManager.onBackPress()) return;
-        super.onBackPressed();
-
     }
 
     @Override

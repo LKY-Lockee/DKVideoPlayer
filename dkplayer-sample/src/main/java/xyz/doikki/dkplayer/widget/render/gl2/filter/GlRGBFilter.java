@@ -10,8 +10,7 @@ import android.opengl.GLES20;
  */
 public class GlRGBFilter extends GlFilter {
 
-    private static final String RGB_FRAGMENT_SHADER = "" +
-            "precision mediump float;" +
+    private static final String RGB_FRAGMENT_SHADER = "precision mediump float;" +
             " varying vec2 vTextureCoord;\n" +
             "  \n" +
             " uniform lowp sampler2D sTexture;\n" +

@@ -1,5 +1,6 @@
 package xyz.doikki.dkplayer.adapter;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,17 +12,21 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+
+import java.util.List;
+
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.adapter.listener.OnItemChildClickListener;
 import xyz.doikki.dkplayer.adapter.listener.OnItemClickListener;
 import xyz.doikki.dkplayer.bean.VideoBean;
 import xyz.doikki.videocontroller.component.PrepareView;
 
-import java.util.List;
-
+/**
+ * Modified by LKY-Lockee on 2026/6/22
+ */
 public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecyclerViewAdapter.VideoHolder> {
 
-    private List<VideoBean> videos;
+    private final List<VideoBean> videos;
 
     private OnItemChildClickListener mOnItemChildClickListener;
 
@@ -39,7 +44,7 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
     }
 
     @Override
-    public void onBindViewHolder(@NonNull VideoHolder holder, int position) {
+    public void onBindViewHolder(@NonNull VideoHolder holder, @SuppressLint("RecyclerView") int position) {
 
         VideoBean videoBean = videos.get(position);
 
@@ -67,10 +72,10 @@ public class VideoRecyclerViewAdapter extends RecyclerView.Adapter<VideoRecycler
     public class VideoHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public int mPosition;
-        public FrameLayout mPlayerContainer;
-        public TextView mTitle;
-        public ImageView mThumb;
-        public PrepareView mPrepareView;
+        public final FrameLayout mPlayerContainer;
+        public final TextView mTitle;
+        public final ImageView mThumb;
+        public final PrepareView mPrepareView;
 
         VideoHolder(View itemView) {
             super(itemView);

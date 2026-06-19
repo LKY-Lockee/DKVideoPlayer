@@ -30,10 +30,12 @@ import xyz.doikki.videoplayer.player.VideoView;
 
 /**
  * RecyclerView demo
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 public class RecyclerViewFragment extends BaseFragment implements OnItemChildClickListener {
 
-    protected List<VideoBean> mVideos = new ArrayList<>();
+    protected final List<VideoBean> mVideos = new ArrayList<>();
     protected VideoRecyclerViewAdapter mAdapter;
     protected RecyclerView mRecyclerView;
     protected LinearLayoutManager mLinearLayoutManager;
@@ -90,16 +92,11 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
 
         View view = findViewById(R.id.add);
         view.setVisibility(View.VISIBLE);
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mAdapter.addData(DataUtil.getVideoList());
-            }
-        });
+        view.setOnClickListener(v -> mAdapter.addData(DataUtil.getVideoList()));
     }
 
     protected void initVideoView() {
-        mVideoView = new VideoView(getActivity());
+        mVideoView = new VideoView(requireActivity());
         mVideoView.setOnStateChangeListener(new VideoView.SimpleOnStateChangeListener() {
             @Override
             public void onPlayStateChanged(int playState) {
@@ -111,15 +108,15 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
                 }
             }
         });
-        mController = new StandardVideoController(getActivity());
-        mErrorView = new ErrorView(getActivity());
+        mController = new StandardVideoController(requireActivity());
+        mErrorView = new ErrorView(requireActivity());
         mController.addControlComponent(mErrorView);
-        mCompleteView = new CompleteView(getActivity());
+        mCompleteView = new CompleteView(requireActivity());
         mController.addControlComponent(mCompleteView);
-        mTitleView = new TitleView(getActivity());
+        mTitleView = new TitleView(requireActivity());
         mController.addControlComponent(mTitleView);
-        mController.addControlComponent(new VodControlView(getActivity()));
-        mController.addControlComponent(new GestureView(getActivity()));
+        mController.addControlComponent(new VodControlView(requireActivity()));
+        mController.addControlComponent(new GestureView(requireActivity()));
         mController.setEnableOrientation(true);
         mVideoView.setVideoController(mController);
     }
@@ -128,8 +125,9 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
     protected void initData() {
         super.initData();
         List<VideoBean> videoList = DataUtil.getVideoList();
+        int oldSize = mVideos.size();
         mVideos.addAll(videoList);
-        mAdapter.notifyDataSetChanged();
+        mAdapter.notifyItemRangeInserted(oldSize, videoList.size());
     }
 
     @Override
@@ -180,6 +178,7 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
 
     /**
      * 开始播放
+     *
      * @param position 列表位置
      */
     protected void startPlay(int position) {
@@ -189,7 +188,7 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
         }
         VideoBean videoBean = mVideos.get(position);
         //边播边存
-//        String proxyUrl = ProxyVideoCacheManager.getProxy(getActivity()).getProxyUrl(videoBean.getUrl());
+//        String proxyUrl = ProxyVideoCacheManager.getProxy(requireActivity()).getProxyUrl(videoBean.getUrl());
 //        mVideoView.setUrl(proxyUrl);
 
         mVideoView.setUrl(videoBean.getUrl());
@@ -213,8 +212,8 @@ public class RecyclerViewFragment extends BaseFragment implements OnItemChildCli
         if (mVideoView.isFullScreen()) {
             mVideoView.stopFullScreen();
         }
-        if(getActivity().getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        if (requireActivity().getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+            requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
         mCurPos = -1;
     }

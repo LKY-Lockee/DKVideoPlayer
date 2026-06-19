@@ -15,6 +15,9 @@ import xyz.doikki.videocontroller.component.VodControlView;
 import xyz.doikki.videoplayer.controller.MediaPlayerControl;
 import xyz.doikki.videoplayer.player.VideoView;
 
+/**
+ * Modified by LKY-Lockee on 2026/6/22
+ */
 public class PortraitWhenFullScreenController extends StandardVideoController {
 
     private View mFullScreen;
@@ -37,12 +40,7 @@ public class PortraitWhenFullScreenController extends StandardVideoController {
         VodControlView vodControlView = new VodControlView(getContext());
         vodControlView.showBottomProgress(false);
         mFullScreen = vodControlView.findViewById(R.id.fullscreen);
-        mFullScreen.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleFullScreen();
-            }
-        });
+        mFullScreen.setOnClickListener(v -> toggleFullScreen());
         addControlComponent(vodControlView);
     }
 
@@ -67,7 +65,7 @@ public class PortraitWhenFullScreenController extends StandardVideoController {
     }
 
     @Override
-    public boolean onSingleTapConfirmed(MotionEvent e) {
+    public boolean onSingleTapConfirmed(@NonNull MotionEvent e) {
         if (!mControlWrapper.isFullScreen()) {
             mControlWrapper.startFullScreen();
             return true;

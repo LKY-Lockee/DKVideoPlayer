@@ -1,6 +1,7 @@
 package xyz.doikki.dkplayer.adapter;
 
 import android.content.Context;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,25 +14,29 @@ import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 
 import com.bumptech.glide.Glide;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.bean.TiktokBean;
 import xyz.doikki.dkplayer.util.cache.PreloadManager;
 import xyz.doikki.dkplayer.widget.component.TikTokView;
 
-import java.util.ArrayList;
-import java.util.List;
-
+/**
+ * Modified by LKY-Lockee on 2026/6/22
+ */
 public class Tiktok2Adapter extends PagerAdapter {
 
     /**
      * View缓存池，从ViewPager中移除的item将会存到这里面，用来复用
      */
-    private List<View> mViewPool = new ArrayList<>();
+    private final List<View> mViewPool = new ArrayList<>();
 
     /**
      * 数据源
      */
-    private List<TiktokBean> mVideoBeans;
+    private final List<TiktokBean> mVideoBeans;
 
     public Tiktok2Adapter(List<TiktokBean> videoBeans) {
         this.mVideoBeans = videoBeans;
@@ -52,9 +57,14 @@ public class Tiktok2Adapter extends PagerAdapter {
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         Context context = container.getContext();
         View view = null;
-        if (mViewPool.size() > 0) {//取第一个进行复用
-            view = mViewPool.get(0);
-            mViewPool.remove(0);
+        if (!mViewPool.isEmpty()) {//取第一个进行复用
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                view = mViewPool.getFirst();
+                mViewPool.removeFirst();
+            } else {
+                view = mViewPool.get(0);
+                mViewPool.remove(0);
+            }
         }
 
         ViewHolder viewHolder;
@@ -73,12 +83,7 @@ public class Tiktok2Adapter extends PagerAdapter {
                 .placeholder(android.R.color.white)
                 .into(viewHolder.mThumb);
         viewHolder.mTitle.setText(item.title);
-        viewHolder.mTitle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(context, "点击了标题", Toast.LENGTH_SHORT).show();
-            }
-        });
+        viewHolder.mTitle.setOnClickListener(v -> Toast.makeText(context, "点击了标题", Toast.LENGTH_SHORT).show());
         viewHolder.mPosition = position;
         container.addView(view);
         return view;
@@ -101,10 +106,10 @@ public class Tiktok2Adapter extends PagerAdapter {
     public static class ViewHolder {
 
         public int mPosition;
-        public TextView mTitle;//标题
-        public ImageView mThumb;//封面图
-        public TikTokView mTikTokView;
-        public FrameLayout mPlayerContainer;
+        public final TextView mTitle;//标题
+        public final ImageView mThumb;//封面图
+        public final TikTokView mTikTokView;
+        public final FrameLayout mPlayerContainer;
 
         ViewHolder(View itemView) {
             mTikTokView = itemView.findViewById(R.id.tiktok_View);

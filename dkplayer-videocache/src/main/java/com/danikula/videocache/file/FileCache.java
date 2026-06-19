@@ -11,6 +11,8 @@ import java.io.RandomAccessFile;
  * {@link Cache} that uses file for storing data.
  *
  * @author Alexey Danilov (danikula@gmail.com).
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 public class FileCache implements Cache {
 
@@ -31,6 +33,9 @@ public class FileCache implements Cache {
             }
             this.diskUsage = diskUsage;
             File directory = file.getParentFile();
+            if (directory == null) {
+                throw new IOException("File " + file + " is not in a directory");
+            }
             Files.makeDir(directory);
             boolean completed = file.exists();
             this.file = completed ? file : new File(file.getParentFile(), file.getName() + TEMP_POSTFIX);

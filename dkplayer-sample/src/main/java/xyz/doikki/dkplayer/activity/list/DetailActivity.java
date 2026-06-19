@@ -1,12 +1,10 @@
 package xyz.doikki.dkplayer.activity.list;
 
 import android.content.Intent;
-import android.os.Build;
 import android.transition.Transition;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
-import androidx.annotation.RequiresApi;
 import androidx.core.view.ViewCompat;
 
 import xyz.doikki.dkplayer.R;
@@ -17,6 +15,9 @@ import xyz.doikki.dkplayer.util.Utils;
 import xyz.doikki.videocontroller.StandardVideoController;
 import xyz.doikki.videoplayer.player.VideoView;
 
+/**
+ * Modified by LKY-Lockee on 2026/6/22
+ */
 public class DetailActivity extends BaseActivity<VideoView> {
 
     private FrameLayout mPlayerContainer;
@@ -36,7 +37,7 @@ public class DetailActivity extends BaseActivity<VideoView> {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
+            getOnBackPressedDispatcher().onBackPressed();
         }
         return true;
     }
@@ -47,7 +48,7 @@ public class DetailActivity extends BaseActivity<VideoView> {
         mPlayerContainer = findViewById(R.id.player_container);
         ViewCompat.setTransitionName(mPlayerContainer, VIEW_NAME_PLAYER_CONTAINER);
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP || !addTransitionListener()) {
+        if (!addTransitionListener()) {
             initVideoView();
         }
     }
@@ -79,7 +80,6 @@ public class DetailActivity extends BaseActivity<VideoView> {
         }
     }
 
-    @RequiresApi(21)
     private boolean addTransitionListener() {
         final Transition transition = getWindow().getSharedElementEnterTransition();
 

@@ -1,5 +1,8 @@
 package com.danikula.videocache.sourcestorage;
 
+import static com.danikula.videocache.Preconditions.checkAllNotNull;
+import static com.danikula.videocache.Preconditions.checkNotNull;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -8,13 +11,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.danikula.videocache.SourceInfo;
 
-import static com.danikula.videocache.Preconditions.checkAllNotNull;
-import static com.danikula.videocache.Preconditions.checkNotNull;
-
 /**
  * Database based {@link SourceInfoStorage}.
  *
  * @author Alexey Danilov (danikula@gmail.com).
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 class DatabaseSourceInfoStorage extends SQLiteOpenHelper implements SourceInfoStorage {
 
@@ -51,14 +53,8 @@ class DatabaseSourceInfoStorage extends SQLiteOpenHelper implements SourceInfoSt
     @Override
     public SourceInfo get(String url) {
         checkNotNull(url);
-        Cursor cursor = null;
-        try {
-            cursor = getReadableDatabase().query(TABLE, ALL_COLUMNS, COLUMN_URL + "=?", new String[]{url}, null, null, null);
-            return cursor == null || !cursor.moveToFirst() ? null : convert(cursor);
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
+        try (Cursor cursor = getReadableDatabase().query(TABLE, ALL_COLUMNS, COLUMN_URL + "=?", new String[]{url}, null, null, null)) {
+            return !cursor.moveToFirst() ? null : convert(cursor);
         }
     }
 

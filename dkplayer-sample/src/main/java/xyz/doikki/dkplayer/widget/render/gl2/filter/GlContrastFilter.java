@@ -9,8 +9,7 @@ import android.opengl.GLES20;
  */
 public class GlContrastFilter extends GlFilter {
 
-    private static final String CONTRAST_FRAGMENT_SHADER = "" +
-            "precision mediump float;" +
+    private static final String CONTRAST_FRAGMENT_SHADER = "precision mediump float;" +
             " varying vec2 vTextureCoord;\n" +
             " \n" +
             " uniform lowp sampler2D sTexture;\n" +

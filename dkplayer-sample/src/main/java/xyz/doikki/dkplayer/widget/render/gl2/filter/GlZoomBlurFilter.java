@@ -5,8 +5,7 @@ import android.opengl.GLES20;
 
 public class GlZoomBlurFilter extends GlFilter {
 
-    private static final String ZOOM_BLUR_FRAGMENT_SHADER = "" +
-            "precision mediump float;" +
+    private static final String ZOOM_BLUR_FRAGMENT_SHADER = "precision mediump float;" +
             " varying vec2 vTextureCoord;\n" +
             "\n" +
             "uniform lowp sampler2D sTexture;\n" +

@@ -5,8 +5,7 @@ import android.opengl.GLES20;
 
 public class GlSwirlFilter extends GlFilter {
 
-    private static final String SWIRL_FRAGMENT_SHADER = "" +
-            "precision mediump float;" +
+    private static final String SWIRL_FRAGMENT_SHADER = "precision mediump float;" +
             " varying vec2 vTextureCoord;\n" +
             "\n" +
             " uniform lowp sampler2D sTexture;\n" +

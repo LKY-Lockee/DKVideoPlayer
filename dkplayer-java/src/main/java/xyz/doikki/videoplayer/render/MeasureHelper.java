@@ -4,6 +4,9 @@ import android.view.View;
 
 import xyz.doikki.videoplayer.player.VideoView;
 
+/**
+ * Modified by LKY-Lockee on 2026/6/22
+ */
 public class MeasureHelper {
 
     private int mVideoWidth;
@@ -46,14 +49,6 @@ public class MeasureHelper {
 
         //如果设置了比例
         switch (mCurrentScreenScale) {
-            case VideoView.SCREEN_SCALE_DEFAULT:
-            default:
-                if (mVideoWidth * height < width * mVideoHeight) {
-                    width = height * mVideoWidth / mVideoHeight;
-                } else if (mVideoWidth * height > width * mVideoHeight) {
-                    height = width * mVideoHeight / mVideoWidth;
-                }
-                break;
             case VideoView.SCREEN_SCALE_ORIGINAL:
                 width = mVideoWidth;
                 height = mVideoHeight;
@@ -80,6 +75,14 @@ public class MeasureHelper {
                 if (mVideoWidth * height > width * mVideoHeight) {
                     width = height * mVideoWidth / mVideoHeight;
                 } else {
+                    height = width * mVideoHeight / mVideoWidth;
+                }
+                break;
+            case VideoView.SCREEN_SCALE_DEFAULT:
+            default:
+                if (mVideoWidth * height < width * mVideoHeight) {
+                    width = height * mVideoWidth / mVideoHeight;
+                } else if (mVideoWidth * height > width * mVideoHeight) {
                     height = width * mVideoHeight / mVideoWidth;
                 }
                 break;

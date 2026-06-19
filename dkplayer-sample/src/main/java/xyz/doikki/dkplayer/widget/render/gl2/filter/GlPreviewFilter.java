@@ -8,27 +8,27 @@ import static android.opengl.GLES20.GL_TRIANGLE_STRIP;
 
 import android.opengl.GLES20;
 
-
-
+/**
+ * Modified by LKY-Lockee on 2026/6/22
+ */
 public class GlPreviewFilter extends GlFilter {
 
     public static final int GL_TEXTURE_EXTERNAL_OES = 0x8D65;
 
-    private static final String VERTEX_SHADER =
-            "uniform mat4 uMVPMatrix;\n" +
-                    "uniform mat4 uSTMatrix;\n" +
-                    "uniform float uCRatio;\n" +
+    private static final String VERTEX_SHADER = "uniform mat4 uMVPMatrix;\n" +
+            "uniform mat4 uSTMatrix;\n" +
+            "uniform float uCRatio;\n" +
 
-                    "attribute vec4 aPosition;\n" +
-                    "attribute vec4 aTextureCoord;\n" +
-                    "varying highp vec2 vTextureCoord;\n" +
+            "attribute vec4 aPosition;\n" +
+            "attribute vec4 aTextureCoord;\n" +
+            "varying highp vec2 vTextureCoord;\n" +
 
-                    "void main() {\n" +
-                    "vec4 scaledPos = aPosition;\n" +
-                    "scaledPos.x = scaledPos.x * uCRatio;\n" +
-                    "gl_Position = uMVPMatrix * scaledPos;\n" +
-                    "vTextureCoord = (uSTMatrix * aTextureCoord).xy;\n" +
-                    "}\n";
+            "void main() {\n" +
+            "vec4 scaledPos = aPosition;\n" +
+            "scaledPos.x = scaledPos.x * uCRatio;\n" +
+            "gl_Position = uMVPMatrix * scaledPos;\n" +
+            "vTextureCoord = (uSTMatrix * aTextureCoord).xy;\n" +
+            "}\n";
 
     private final int texTarget;
 
@@ -39,10 +39,8 @@ public class GlPreviewFilter extends GlFilter {
 
     private static String createFragmentShaderSourceOESIfNeed(final int texTarget) {
         if (texTarget == GL_TEXTURE_EXTERNAL_OES) {
-            return new StringBuilder()
-                    .append("#extension GL_OES_EGL_image_external : require\n")
-                    .append(DEFAULT_FRAGMENT_SHADER.replace("sampler2D", "samplerExternalOES"))
-                    .toString();
+            return "#extension GL_OES_EGL_image_external : require\n" +
+                    DEFAULT_FRAGMENT_SHADER.replace("sampler2D", "samplerExternalOES");
         }
         return DEFAULT_FRAGMENT_SHADER;
     }

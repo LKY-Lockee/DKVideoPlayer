@@ -13,6 +13,9 @@ import xyz.doikki.dkplayer.widget.player.CustomIjkMediaPlayer;
 import xyz.doikki.videoplayer.player.BaseVideoView;
 import xyz.doikki.videoplayer.player.PlayerFactory;
 
+/**
+ * Modified by LKY-Lockee on 2026/6/22
+ */
 public class IjkVideoView extends BaseVideoView<CustomIjkMediaPlayer> {
 
     private final HashMap<String, Object> mPlayerOptions = new HashMap<>();
@@ -33,7 +36,7 @@ public class IjkVideoView extends BaseVideoView<CustomIjkMediaPlayer> {
     }
 
     {
-        setPlayerFactory(new PlayerFactory<CustomIjkMediaPlayer>() {
+        setPlayerFactory(new PlayerFactory<>() {
             @Override
             public CustomIjkMediaPlayer createPlayer(Context context) {
                 return new CustomIjkMediaPlayer(context);

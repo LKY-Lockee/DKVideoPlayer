@@ -12,16 +12,17 @@ import android.widget.FrameLayout;
 import java.lang.reflect.Field;
 
 import xyz.doikki.videoplayer.controller.ControlWrapper;
-import xyz.doikki.videoplayer.player.BaseVideoView;
 import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.player.VideoViewConfig;
 import xyz.doikki.videoplayer.player.VideoViewManager;
 
+/**
+ * Modified by LKY-Lockee on 2026/6/22
+ */
 public final class Utils {
 
     private Utils() {
     }
-
 
     /**
      * 获取当前的播放核心
@@ -57,9 +58,12 @@ public final class Utils {
     public static Object getCurrentPlayerFactoryInVideoView(VideoView videoView) {
         Object playerFactory = null;
         try {
-            Field mPlayerFactoryField = videoView.getClass().getSuperclass().getDeclaredField("mPlayerFactory");
-            mPlayerFactoryField.setAccessible(true);
-            playerFactory = mPlayerFactoryField.get(videoView);
+            Class<?> superClass = videoView.getClass().getSuperclass();
+            if (superClass != null) {
+                Field mPlayerFactoryField = superClass.getDeclaredField("mPlayerFactory");
+                mPlayerFactoryField.setAccessible(true);
+                playerFactory = mPlayerFactoryField.get(videoView);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -83,10 +87,6 @@ public final class Utils {
     public static String playState2str(int state) {
         String playStateString;
         switch (state) {
-            default:
-            case VideoView.STATE_IDLE:
-                playStateString = "idle";
-                break;
             case VideoView.STATE_PREPARING:
                 playStateString = "preparing";
                 break;
@@ -111,6 +111,10 @@ public final class Utils {
             case VideoView.STATE_ERROR:
                 playStateString = "error";
                 break;
+            case VideoView.STATE_IDLE:
+            default:
+                playStateString = "idle";
+                break;
         }
         return String.format("playState: %s", playStateString);
     }
@@ -121,15 +125,15 @@ public final class Utils {
     public static String playerState2str(int state) {
         String playerStateString;
         switch (state) {
-            default:
-            case VideoView.PLAYER_NORMAL:
-                playerStateString = "normal";
-                break;
             case VideoView.PLAYER_FULL_SCREEN:
                 playerStateString = "full screen";
                 break;
             case VideoView.PLAYER_TINY_SCREEN:
                 playerStateString = "tiny screen";
+                break;
+            case VideoView.PLAYER_NORMAL:
+            default:
+                playerStateString = "normal";
                 break;
         }
         return String.format("playerState: %s", playerStateString);
@@ -156,7 +160,7 @@ public final class Utils {
                 null, null);
         if (cursor != null) {
             cursor.moveToFirst();
-            filePath = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA));
+            filePath = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA));
             cursor.close();
         }
         return filePath;

@@ -16,7 +16,6 @@ import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -36,6 +35,8 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
  * 5.锁定状态改变: {@link #handleLockStateChanged(boolean)}
  * 6.设备方向监听: {@link #onOrientationChanged(int)}
  * Created by Doikki on 2017/4/12.
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 public abstract class BaseVideoController extends FrameLayout
         implements IVideoController,
@@ -72,7 +73,7 @@ public abstract class BaseVideoController extends FrameLayout
     private boolean mIsStartProgress;
 
     //保存了所有的控制组件
-    protected LinkedHashMap<IControlComponent, Boolean> mControlComponents = new LinkedHashMap<>();
+    protected final LinkedHashMap<IControlComponent, Boolean> mControlComponents = new LinkedHashMap<>();
 
     private Animation mShowAnim;
     private Animation mHideAnim;
@@ -186,13 +187,7 @@ public abstract class BaseVideoController extends FrameLayout
      * 关于游离控制组件的定义请看 {@link #addControlComponent(IControlComponent, boolean)} 关于 isDissociate 的解释
      */
     public void removeAllDissociateComponents() {
-        Iterator<Map.Entry<IControlComponent, Boolean>> it = mControlComponents.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<IControlComponent, Boolean> next = it.next();
-            if (next.getValue()) {
-                it.remove();
-            }
-        }
+        mControlComponents.entrySet().removeIf(Map.Entry::getValue);
     }
 
     /**
@@ -270,12 +265,7 @@ public abstract class BaseVideoController extends FrameLayout
     /**
      * 隐藏播放视图Runnable
      */
-    protected final Runnable mFadeOut = new Runnable() {
-        @Override
-        public void run() {
-            hide();
-        }
-    };
+    protected final Runnable mFadeOut = this::hide;
 
     @Override
     public void setLocked(boolean locked) {
@@ -311,7 +301,7 @@ public abstract class BaseVideoController extends FrameLayout
     /**
      * 刷新进度Runnable
      */
-    protected Runnable mShowProgress = new Runnable() {
+    protected final Runnable mShowProgress = new Runnable() {
         @Override
         public void run() {
             int pos = setProgress();
@@ -436,12 +426,7 @@ public abstract class BaseVideoController extends FrameLayout
         if (mControlWrapper.isPlaying()
                 && (mEnableOrientation || mControlWrapper.isFullScreen())) {
             if (hasWindowFocus) {
-                postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mOrientationHelper.enable();
-                    }
-                }, 800);
+                postDelayed(() -> mOrientationHelper.enable(), 800);
             } else {
                 mOrientationHelper.disable();
             }

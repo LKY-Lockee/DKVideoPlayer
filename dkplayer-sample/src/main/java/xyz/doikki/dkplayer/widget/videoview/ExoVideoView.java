@@ -5,12 +5,14 @@ import android.util.AttributeSet;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.util.UnstableApi;
+import androidx.media3.exoplayer.LoadControl;
+import androidx.media3.exoplayer.RenderersFactory;
+import androidx.media3.exoplayer.source.MediaSource;
+import androidx.media3.exoplayer.trackselection.TrackSelector;
 
-import com.google.android.exoplayer2.LoadControl;
-import com.google.android.exoplayer2.RenderersFactory;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
-
+import java.util.List;
 import java.util.Map;
 
 import xyz.doikki.dkplayer.widget.player.CustomExoMediaPlayer;
@@ -18,6 +20,10 @@ import xyz.doikki.videoplayer.exo.ExoMediaSourceHelper;
 import xyz.doikki.videoplayer.player.BaseVideoView;
 import xyz.doikki.videoplayer.player.PlayerFactory;
 
+/**
+ * Modified by LKY-Lockee on 2026/6/22
+ */
+@UnstableApi
 public class ExoVideoView extends BaseVideoView<CustomExoMediaPlayer> {
 
     private MediaSource mMediaSource;
@@ -44,7 +50,7 @@ public class ExoVideoView extends BaseVideoView<CustomExoMediaPlayer> {
 
     {
         //由于传递了泛型，必须将CustomExoMediaPlayer设置进来，否者报错
-        setPlayerFactory(new PlayerFactory<CustomExoMediaPlayer>() {
+        setPlayerFactory(new PlayerFactory<>() {
             @Override
             public CustomExoMediaPlayer createPlayer(Context context) {
                 return new CustomExoMediaPlayer(context);
@@ -75,6 +81,13 @@ public class ExoVideoView extends BaseVideoView<CustomExoMediaPlayer> {
      */
     public void setMediaSource(MediaSource mediaSource) {
         mMediaSource = mediaSource;
+    }
+
+    /**
+     * 设置ExoPlayer的MediaItem列表，替代已弃用的 ConcatenatingMediaSource
+     */
+    public void setMediaItems(List<MediaItem> mediaItems) {
+        mMediaPlayer.setDataSources(mediaItems);
     }
 
     @Override

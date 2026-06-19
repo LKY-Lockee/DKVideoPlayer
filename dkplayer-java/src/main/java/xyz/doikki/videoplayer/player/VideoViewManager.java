@@ -10,6 +10,8 @@ import xyz.doikki.videoplayer.util.L;
  * 视频播放器管理器，管理当前正在播放的VideoView，以及播放器配置
  * 你也可以用来保存常驻内存的VideoView，但是要注意通过Application Context创建，
  * 以免内存泄漏
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 public class VideoViewManager {
 
@@ -26,12 +28,12 @@ public class VideoViewManager {
     /**
      * VideoViewManager实例
      */
-    private static VideoViewManager sInstance;
+    private static volatile VideoViewManager sInstance;
 
     /**
      * VideoViewConfig实例
      */
-    private static VideoViewConfig sConfig;
+    private static volatile VideoViewConfig sConfig;
 
     private VideoViewManager() {
         mPlayOnMobileNetwork = getConfig().mPlayOnMobileNetwork;
@@ -85,6 +87,7 @@ public class VideoViewManager {
 
     /**
      * 添加VideoView
+     *
      * @param tag 相同tag的VideoView只会保存一个，如果tag相同则会release并移除前一个
      */
     public void add(VideoView videoView, String tag) {

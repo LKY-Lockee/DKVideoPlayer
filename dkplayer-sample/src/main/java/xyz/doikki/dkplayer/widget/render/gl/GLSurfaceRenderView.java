@@ -22,13 +22,14 @@ import android.opengl.EGL14;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.Surface;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import com.google.android.exoplayer2.util.GlUtil;
+import androidx.media3.common.util.GlUtil;
+import androidx.media3.common.util.UnstableApi;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -49,11 +50,13 @@ import xyz.doikki.videoplayer.render.MeasureHelper;
  *
  * <p>This view must be created programmatically, as it is necessary to specify whether a context
  * supporting protected content should be created at construction time.
- * 参考：https://github.com/google/ExoPlayer/tree/release-v2/demos/gl
+ * 参考：<a href="https://github.com/google/ExoPlayer/tree/release-v2/demos/gl">...</a>
  * 请尽量理解此demo的含义，关键代码在 {@link VideoRenderer} 的 onDrawFrame 方法，有问题问Google，不要来找我
  * OpenGL相关资料：
- * https://developer.android.com/guide/topics/graphics/opengl?hl=zh-cn
- * https://github.com/google/grafika
+ * <a href="https://developer.android.com/guide/topics/graphics/opengl?hl=zh-cn">...</a>
+ * <a href="https://github.com/google/grafika">...</a>
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 public final class GLSurfaceRenderView extends GLSurfaceView implements IRenderView {
 
@@ -61,6 +64,7 @@ public final class GLSurfaceRenderView extends GLSurfaceView implements IRenderV
 
     private AbstractPlayer player;
 
+    @UnstableApi
     @Override
     public void attachToPlayer(@NonNull AbstractPlayer player) {
         this.player = player;
@@ -155,7 +159,7 @@ public final class GLSurfaceRenderView extends GLSurfaceView implements IRenderV
     @SuppressWarnings("InlinedApi")
     public GLSurfaceRenderView(Context context) {
         super(context);
-        mainHandler = new Handler();
+        mainHandler = new Handler(Looper.getMainLooper());
     }
 
     /**
@@ -282,16 +286,21 @@ public final class GLSurfaceRenderView extends GLSurfaceView implements IRenderV
             transformMatrix = new float[16];
         }
 
+        @UnstableApi
         @Override
         public synchronized void onSurfaceCreated(GL10 gl, EGLConfig config) {
-            texture = GlUtil.createExternalTexture();
-            surfaceTexture = new SurfaceTexture(texture);
-            surfaceTexture.setOnFrameAvailableListener(
-                    surfaceTexture -> {
-                        frameAvailable.set(true);
-                        requestRender();
-                    });
-            onSurfaceTextureAvailable(surfaceTexture);
+            try {
+                texture = GlUtil.createExternalTexture();
+                surfaceTexture = new SurfaceTexture(texture);
+                surfaceTexture.setOnFrameAvailableListener(
+                        surfaceTexture -> {
+                            frameAvailable.set(true);
+                            requestRender();
+                        });
+                onSurfaceTextureAvailable(surfaceTexture);
+            } catch (GlUtil.GlException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override

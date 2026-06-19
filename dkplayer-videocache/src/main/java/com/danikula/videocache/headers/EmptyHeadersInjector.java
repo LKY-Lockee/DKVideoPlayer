@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * Empty {@link HeaderInjector} implementation.
  *
- * @author Lucas Nelaupe (https://github.com/lucas34).
+ * @author Lucas Nelaupe (<a href="https://github.com/lucas34">...</a>).
  */
 public class EmptyHeadersInjector implements HeaderInjector {
 

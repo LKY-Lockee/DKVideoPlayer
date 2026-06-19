@@ -6,6 +6,8 @@ import java.io.ByteArrayInputStream;
  * Simple memory based {@link Source} implementation.
  *
  * @author Alexey Danilov (danikula@gmail.com).
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 public class ByteArraySource implements Source {
 
@@ -17,23 +19,23 @@ public class ByteArraySource implements Source {
     }
 
     @Override
-    public int read(byte[] buffer) throws ProxyCacheException {
+    public int read(byte[] buffer) {
         return arrayInputStream.read(buffer, 0, buffer.length);
     }
 
     @Override
-    public long length() throws ProxyCacheException {
+    public long length() {
         return data.length;
     }
 
     @Override
-    public void open(long offset) throws ProxyCacheException {
+    public void open(long offset) {
         arrayInputStream = new ByteArrayInputStream(data);
         arrayInputStream.skip(offset);
     }
 
     @Override
-    public void close() throws ProxyCacheException {
+    public void close() {
     }
 }
 

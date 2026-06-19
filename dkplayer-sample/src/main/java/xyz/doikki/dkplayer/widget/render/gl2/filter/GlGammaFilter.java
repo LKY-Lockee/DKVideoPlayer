@@ -3,8 +3,7 @@ package xyz.doikki.dkplayer.widget.render.gl2.filter;
 import android.opengl.GLES20;
 
 public class GlGammaFilter extends GlFilter {
-    private static final String GAMMA_FRAGMENT_SHADER = "" +
-            "precision mediump float;" +
+    private static final String GAMMA_FRAGMENT_SHADER = "precision mediump float;" +
             " varying vec2 vTextureCoord;\n" +
             " \n" +
             " uniform lowp sampler2D sTexture;\n" +

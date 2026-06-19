@@ -15,6 +15,8 @@ import xyz.doikki.videocontroller.StandardVideoController;
 
 /**
  * 自定义的IjkVideoView
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 public class CustomIjkPlayerActivity extends BaseActivity<IjkVideoView> implements View.OnClickListener {
 
@@ -47,44 +49,41 @@ public class CustomIjkPlayerActivity extends BaseActivity<IjkVideoView> implemen
     @Override
     public void onClick(View v) {
         mVideoView.release();
-        switch (v.getId()) {
-            case R.id.btn_ffconcat:
-                //支持concat
-                mVideoView.addFormatOption("safe", "0");
-                mVideoView.addFormatOption("protocol_whitelist",
-                        "rtmp,concat,ffconcat,file,subfile,http,https,tls,rtp,tcp,udp,crypto,rtsp");
-                File cacheDir = getExternalCacheDir();
-                File concat = new File(cacheDir, "playlist.ffconcat");
-                if (concat.exists()) {
-                    concat.delete();
-                }
-                //注意：播放文件内容一定要按照如下格式编写，详见 https://ffmpeg.org/ffmpeg-formats.html#concat
-                try {
-                    FileWriter writer = new FileWriter(concat);
-                    //ffconcat版本
-                    writer.write("ffconcat version 1.0");
+        int id = v.getId();
+        if (id == R.id.btn_ffconcat) {//支持concat
+            mVideoView.addFormatOption("safe", "0");
+            mVideoView.addFormatOption("protocol_whitelist",
+                    "rtmp,concat,ffconcat,file,subfile,http,https,tls,rtp,tcp,udp,crypto,rtsp");
+            File cacheDir = getExternalCacheDir();
+            File concat = new File(cacheDir, "playlist.ffconcat");
+            if (concat.exists()) {
+                concat.delete();
+            }
+            //注意：播放文件内容一定要按照如下格式编写，详见 https://ffmpeg.org/ffmpeg-formats.html#concat
+            try {
+                FileWriter writer = new FileWriter(concat);
+                //ffconcat版本
+                writer.write("ffconcat version 1.0");
+                writer.write("\r\n");
+
+                for (ConcatMedia m : getConcatData()) {
+                    //地址
+                    writer.write("file '" + m.url + "'");
                     writer.write("\r\n");
-
-                    for (ConcatMedia m : getConcatData()) {
-                        //地址
-                        writer.write("file '" + m.url + "'");
-                        writer.write("\r\n");
-                        //时长
-                        writer.write("duration " + m.duration);
-                        writer.write("\r\n");
-                    }
-
-                    writer.flush();
-                    writer.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    //时长
+                    writer.write("duration " + m.duration);
+                    writer.write("\r\n");
                 }
 
-                String concatUrl = "file://" + concat.getAbsolutePath();
-                mVideoView.setUrl(concatUrl);
-                break;
-            case R.id.btn_rtsp:
-                //使用tcp方式拉取rtsp流，默认是通过udp方式
+                writer.flush();
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            String concatUrl = "file://" + concat.getAbsolutePath();
+            mVideoView.setUrl(concatUrl);
+        } else if (id == R.id.btn_rtsp) {//使用tcp方式拉取rtsp流，默认是通过udp方式
 //                mVideoView.addFormatOption("rtsp_transport", "tcp");
 //                mVideoView.addFormatOption("protocol_whitelist",
 //                        "rtmp,concat,ffconcat,file,subfile,http,https,tls,rtp,tcp,udp,crypto,rtsp");
@@ -96,9 +95,8 @@ public class CustomIjkPlayerActivity extends BaseActivity<IjkVideoView> implemen
 //                mVideoView.addPlayerOption("packet-buffering", 0L);
 //                mVideoView.addPlayerOption("framedrop", 1L);
 //                String rtspUrl = "rtsp://192.168.31.246:8554/test";
-                String rtspUrl = "rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov";
-                mVideoView.setUrl(rtspUrl);
-                break;
+            String rtspUrl = "rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov";
+            mVideoView.setUrl(rtspUrl);
         }
         mVideoView.start();
     }
@@ -109,8 +107,8 @@ public class CustomIjkPlayerActivity extends BaseActivity<IjkVideoView> implemen
             this.duration = duration;
         }
 
-        public String url;
-        public long duration;
+        public final String url;
+        public final long duration;
     }
 
 

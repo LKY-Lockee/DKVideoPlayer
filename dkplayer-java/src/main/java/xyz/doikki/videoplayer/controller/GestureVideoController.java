@@ -21,8 +21,9 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
 /**
  * 包含手势操作的VideoController
  * Created by Doikki on 2018/1/6.
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
-
 public abstract class GestureVideoController extends BaseVideoController implements
         GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener,
@@ -133,7 +134,7 @@ public abstract class GestureVideoController extends BaseVideoController impleme
      * 手指按下的瞬间
      */
     @Override
-    public boolean onDown(MotionEvent e) {
+    public boolean onDown(@NonNull MotionEvent e) {
         if (!isInPlaybackState() //不处于播放状态
                 || !mIsGestureEnabled //关闭了手势
                 || PlayerUtils.isEdge(getContext(), e)) //处于屏幕边沿
@@ -156,7 +157,7 @@ public abstract class GestureVideoController extends BaseVideoController impleme
      * 单击
      */
     @Override
-    public boolean onSingleTapConfirmed(MotionEvent e) {
+    public boolean onSingleTapConfirmed(@NonNull MotionEvent e) {
         if (isInPlaybackState()) {
             mControlWrapper.toggleShowState();
         }
@@ -167,7 +168,7 @@ public abstract class GestureVideoController extends BaseVideoController impleme
      * 双击
      */
     @Override
-    public boolean onDoubleTap(MotionEvent e) {
+    public boolean onDoubleTap(@NonNull MotionEvent e) {
         if (mIsDoubleTapTogglePlayEnabled && !isLocked() && isInPlaybackState()) togglePlay();
         return true;
     }
@@ -176,7 +177,7 @@ public abstract class GestureVideoController extends BaseVideoController impleme
      * 在屏幕上滑动
      */
     @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+    public boolean onScroll(MotionEvent e1, @NonNull MotionEvent e2, float distanceX, float distanceY) {
         if (!isInPlaybackState() //不处于播放状态
                 || !mIsGestureEnabled //关闭了手势
                 || !mCanSlide //关闭了滑动手势
@@ -311,28 +312,28 @@ public abstract class GestureVideoController extends BaseVideoController impleme
     }
 
     @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+    public boolean onFling(MotionEvent e1, @NonNull MotionEvent e2, float velocityX, float velocityY) {
         return false;
     }
 
     @Override
-    public void onLongPress(MotionEvent e) {
+    public void onLongPress(@NonNull MotionEvent e) {
 
     }
 
     @Override
-    public void onShowPress(MotionEvent e) {
+    public void onShowPress(@NonNull MotionEvent e) {
 
     }
 
     @Override
-    public boolean onDoubleTapEvent(MotionEvent e) {
+    public boolean onDoubleTapEvent(@NonNull MotionEvent e) {
         return false;
     }
 
 
     @Override
-    public boolean onSingleTapUp(MotionEvent e) {
+    public boolean onSingleTapUp(@NonNull MotionEvent e) {
         return false;
     }
 }

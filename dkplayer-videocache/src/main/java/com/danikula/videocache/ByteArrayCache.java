@@ -7,6 +7,8 @@ import java.util.Arrays;
  * Simple memory based {@link Cache} implementation.
  *
  * @author Alexey Danilov (danikula@gmail.com).
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 public class ByteArrayCache implements Cache {
 
@@ -22,23 +24,20 @@ public class ByteArrayCache implements Cache {
     }
 
     @Override
-    public int read(byte[] buffer, long offset, int length) throws ProxyCacheException {
+    public int read(byte[] buffer, long offset, int length) {
         if (offset >= data.length) {
             return -1;
-        }
-        if (offset > Integer.MAX_VALUE) {
-            throw new IllegalArgumentException("Too long offset for memory cache " + offset);
         }
         return new ByteArrayInputStream(data).read(buffer, (int) offset, length);
     }
 
     @Override
-    public long available() throws ProxyCacheException {
+    public long available() {
         return data.length;
     }
 
     @Override
-    public void append(byte[] newData, int length) throws ProxyCacheException {
+    public void append(byte[] newData, int length) {
         Preconditions.checkNotNull(data);
         Preconditions.checkArgument(length >= 0 && length <= newData.length);
 
@@ -48,7 +47,7 @@ public class ByteArrayCache implements Cache {
     }
 
     @Override
-    public void close() throws ProxyCacheException {
+    public void close() {
     }
 
     @Override

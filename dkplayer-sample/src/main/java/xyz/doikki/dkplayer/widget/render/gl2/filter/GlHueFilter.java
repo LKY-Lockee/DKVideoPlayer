@@ -4,8 +4,7 @@ import android.opengl.GLES20;
 
 public class GlHueFilter extends GlFilter {
 
-    private static final String HUE_FRAGMENT_SHADER = "" +
-            "precision highp float;\n" +
+    private static final String HUE_FRAGMENT_SHADER = "precision highp float;\n" +
             " varying vec2 vTextureCoord;\n" +
             "\n" +
             " uniform lowp sampler2D sTexture;\n" +

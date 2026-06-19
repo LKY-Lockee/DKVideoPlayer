@@ -1,5 +1,6 @@
 package xyz.doikki.dkplayer.activity.pip;
 
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.app.PictureInPictureParams;
 import android.app.RemoteAction;
@@ -17,24 +18,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.ArrayList;
 
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.util.DataUtil;
 import xyz.doikki.videocontroller.StandardVideoController;
 import xyz.doikki.videoplayer.player.VideoView;
 
-import java.util.ArrayList;
-
 /**
  * Android O PiP demo
  * Created by Doikki on 2018/4/24.
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
-
-@RequiresApi(api = Build.VERSION_CODES.O)
 public class AndroidOPiPActivity extends AppCompatActivity {
     /**
      * The arguments to be used for Picture-in-Picture mode.
@@ -123,6 +125,15 @@ public class AndroidOPiPActivity extends AppCompatActivity {
                 }
             }
         });
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (mVideoView.onBackPressed()) return;
+                setEnabled(false);
+                getOnBackPressedDispatcher().onBackPressed();
+            }
+        });
     }
 
     /**
@@ -146,7 +157,7 @@ public class AndroidOPiPActivity extends AppCompatActivity {
                         AndroidOPiPActivity.this,
                         requestCode,
                         new Intent(ACTION_MEDIA_CONTROL).putExtra(EXTRA_CONTROL_TYPE, controlType),
-                        0);
+                        PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         final Icon icon = Icon.createWithResource(AndroidOPiPActivity.this, iconId);
         actions.add(new RemoteAction(icon, title, title, intent));
 
@@ -176,14 +187,9 @@ public class AndroidOPiPActivity extends AppCompatActivity {
         mVideoView.release();
     }
 
+    @SuppressLint("WrongConstant")
     @Override
-    public void onBackPressed() {
-        if (mVideoView.onBackPressed()) return;
-        super.onBackPressed();
-    }
-
-    @Override
-    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode, Configuration newConfig) {
+    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode, @NonNull Configuration newConfig) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig);
         Log.d("pip", "onPictureInPictureModeChanged: " + isInPictureInPictureMode);
         if (isInPictureInPictureMode) {
@@ -217,7 +223,11 @@ public class AndroidOPiPActivity extends AppCompatActivity {
                             }
                         }
                     };
-            registerReceiver(mReceiver, new IntentFilter(ACTION_MEDIA_CONTROL));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                registerReceiver(mReceiver, new IntentFilter(ACTION_MEDIA_CONTROL), RECEIVER_NOT_EXPORTED);
+            } else {
+                registerReceiver(mReceiver, new IntentFilter(ACTION_MEDIA_CONTROL), 4);
+            }
         } else {
             // We are out of PiP mode. We can stop receiving events from it.
             unregisterReceiver(mReceiver);

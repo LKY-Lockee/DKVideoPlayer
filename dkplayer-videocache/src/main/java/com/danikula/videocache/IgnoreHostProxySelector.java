@@ -1,14 +1,14 @@
 package com.danikula.videocache;
 
+import static com.danikula.videocache.Preconditions.checkNotNull;
+
 import java.io.IOException;
 import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.SocketAddress;
 import java.net.URI;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-
-import static com.danikula.videocache.Preconditions.checkNotNull;
 
 /**
  * {@link ProxySelector} that ignore system default proxies for concrete host.
@@ -16,10 +16,12 @@ import static com.danikula.videocache.Preconditions.checkNotNull;
  * It is important to <a href="https://github.com/danikula/AndroidVideoCache/issues/28">ignore system proxy</a> for localhost connection.
  *
  * @author Alexey Danilov (danikula@gmail.com).
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 class IgnoreHostProxySelector extends ProxySelector {
 
-    private static final List<Proxy> NO_PROXY_LIST = Arrays.asList(Proxy.NO_PROXY);
+    private static final List<Proxy> NO_PROXY_LIST = Collections.singletonList(Proxy.NO_PROXY);
 
     private final ProxySelector defaultProxySelector;
     private final String hostToIgnore;

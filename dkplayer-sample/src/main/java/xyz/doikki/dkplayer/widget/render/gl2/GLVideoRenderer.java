@@ -22,6 +22,9 @@ import xyz.doikki.dkplayer.widget.render.gl2.filter.GlLookUpTableFilter;
 import xyz.doikki.dkplayer.widget.render.gl2.filter.GlPreviewFilter;
 import xyz.doikki.videoplayer.player.AbstractPlayer;
 
+/**
+ * Modified by LKY-Lockee on 2026/6/22
+ */
 class GLVideoRenderer extends GLFrameBufferObjectRenderer implements SurfaceTexture.OnFrameAvailableListener {
 
     private static final String TAG = GLVideoRenderer.class.getSimpleName();
@@ -56,20 +59,16 @@ class GLVideoRenderer extends GLFrameBufferObjectRenderer implements SurfaceText
     }
 
     void setGlFilter(final GlFilter filter) {
-        glPreview.queueEvent(new Runnable() {
-            @Override
-            public void run() {
-                if (glFilter != null) {
-                    glFilter.release();
-                    if (glFilter instanceof GlLookUpTableFilter) {
-                        ((GlLookUpTableFilter) glFilter).releaseLutBitmap();
-                    }
-                    glFilter = null;
+        glPreview.queueEvent(() -> {
+            if (glFilter != null) {
+                glFilter.release();
+                if (glFilter instanceof GlLookUpTableFilter) {
+                    ((GlLookUpTableFilter) glFilter).releaseLutBitmap();
                 }
-                glFilter = filter;
-                isNewFilter = true;
-                glPreview.requestRender();
             }
+            glFilter = filter;
+            isNewFilter = true;
+            glPreview.requestRender();
         });
     }
 

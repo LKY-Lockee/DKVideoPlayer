@@ -7,14 +7,15 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import xyz.doikki.videocontroller.R;
-import xyz.doikki.videoplayer.controller.IControlComponent;
 import xyz.doikki.videoplayer.controller.ControlWrapper;
+import xyz.doikki.videoplayer.controller.IControlComponent;
 import xyz.doikki.videoplayer.player.VideoView;
 import xyz.doikki.videoplayer.player.VideoViewManager;
 
@@ -24,11 +25,11 @@ import xyz.doikki.videoplayer.player.VideoViewManager;
 public class PrepareView extends FrameLayout implements IControlComponent {
 
     private ControlWrapper mControlWrapper;
-    
+
     private final ImageView mThumb;
     private final ImageView mStartPlay;
     private final ProgressBar mLoading;
-    private final FrameLayout mNetWarning;
+    private final LinearLayout mNetWarning;
 
     public PrepareView(@NonNull Context context) {
         super(context);
@@ -41,7 +42,7 @@ public class PrepareView extends FrameLayout implements IControlComponent {
     public PrepareView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
-    
+
     {
         LayoutInflater.from(getContext()).inflate(R.layout.dkplayer_layout_prepare_view, this, true);
         mThumb = findViewById(R.id.thumb);
@@ -62,12 +63,7 @@ public class PrepareView extends FrameLayout implements IControlComponent {
      * 设置点击此界面开始播放
      */
     public void setClickStart() {
-        setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mControlWrapper.start();
-            }
-        });
+        setOnClickListener(v -> mControlWrapper.start());
     }
 
     @Override

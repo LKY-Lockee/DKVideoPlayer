@@ -15,7 +15,9 @@ import javax.microedition.khronos.opengles.GL10;
 
 import xyz.doikki.dkplayer.widget.render.gl2.filter.GlFilter;
 
-
+/**
+ * Modified by LKY-Lockee on 2026/6/22
+ */
 abstract class GLFrameBufferObjectRenderer implements GLSurfaceView.Renderer {
 
     private GLFramebufferObject framebufferObject;
@@ -25,7 +27,7 @@ abstract class GLFrameBufferObjectRenderer implements GLSurfaceView.Renderer {
 
 
     GLFrameBufferObjectRenderer() {
-        runOnDraw = new LinkedList<Runnable>();
+        runOnDraw = new LinkedList<>();
     }
 
 
@@ -47,8 +49,10 @@ abstract class GLFrameBufferObjectRenderer implements GLSurfaceView.Renderer {
     @Override
     public final void onDrawFrame(final GL10 gl) {
         synchronized (runOnDraw) {
-            while (!runOnDraw.isEmpty()) {
-                runOnDraw.poll().run();
+            Runnable task = runOnDraw.poll();
+            while (task != null) {
+                task.run();
+                task = runOnDraw.poll();
             }
         }
         framebufferObject.enable();
@@ -65,7 +69,7 @@ abstract class GLFrameBufferObjectRenderer implements GLSurfaceView.Renderer {
     }
 
     @Override
-    protected void finalize() throws Throwable {
+    protected void finalize() {
 
     }
 

@@ -15,6 +15,8 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
@@ -37,6 +39,8 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
 /**
  * 带泛型的播放器，可继承 AbstractPlayer 扩展自己的播放器
  * Created by Doikki on 2017/4/7.
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
         implements MediaPlayerControl, AbstractPlayer.PlayerEventListener {
@@ -62,7 +66,7 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
     public static final int SCREEN_SCALE_CENTER_CROP = 5;
     protected int mCurrentScreenScaleType;
 
-    protected int[] mVideoSize = {0, 0};
+    protected final int[] mVideoSize = {0, 0};
 
     protected boolean mIsMute;//是否静音
 
@@ -139,7 +143,8 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
         VideoViewConfig config = VideoViewManager.getConfig();
         mEnableAudioFocus = config.mEnableAudioFocus;
         mProgressManager = config.mProgressManager;
-        mPlayerFactory = config.mPlayerFactory;
+        //noinspection unchecked
+        mPlayerFactory = (PlayerFactory<P>) config.mPlayerFactory;
         mCurrentScreenScaleType = config.mScreenScaleType;
         mRenderViewFactory = config.mRenderViewFactory;
 
@@ -188,6 +193,7 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
 
     /**
      * 第一次播放
+     *
      * @return 是否成功开始播放
      */
     protected boolean startPlay() {
@@ -296,6 +302,7 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
 
     /**
      * 设置播放数据
+     *
      * @return 播放数据是否设置成功
      */
     protected boolean prepareDataSource() {
@@ -684,7 +691,7 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
     /**
      * 自定义播放核心，继承{@link PlayerFactory}实现自己的播放核心
      */
-    public void setPlayerFactory(PlayerFactory playerFactory) {
+    public void setPlayerFactory(PlayerFactory<P> playerFactory) {
         if (playerFactory == null) {
             throw new IllegalArgumentException("PlayerFactory can not be null!");
         }
@@ -727,15 +734,19 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
     }
 
     private void hideSysBar(ViewGroup decorView) {
-        int uiOptions = decorView.getSystemUiVisibility();
-        uiOptions |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WindowInsetsController controller = decorView.getWindowInsetsController();
+            if (controller != null) {
+                controller.hide(WindowInsets.Type.systemBars());
+                controller.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+            }
+        } else {
+            int uiOptions = decorView.getSystemUiVisibility();
+            uiOptions |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
             uiOptions |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+            decorView.setSystemUiVisibility(uiOptions);
+            getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
-        decorView.setSystemUiVisibility(uiOptions);
-        getActivity().getWindow().setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
     @Override
@@ -772,13 +783,18 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
     }
 
     private void showSysBar(ViewGroup decorView) {
-        int uiOptions = decorView.getSystemUiVisibility();
-        uiOptions &= ~View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WindowInsetsController controller = decorView.getWindowInsetsController();
+            if (controller != null) {
+                controller.show(WindowInsets.Type.systemBars());
+            }
+        } else {
+            int uiOptions = decorView.getSystemUiVisibility();
+            uiOptions &= ~View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
             uiOptions &= ~View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+            decorView.setSystemUiVisibility(uiOptions);
+            getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
-        decorView.setSystemUiVisibility(uiOptions);
-        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
     /**
@@ -996,6 +1012,7 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
      */
     public interface OnStateChangeListener {
         void onPlayerStateChanged(int playerState);
+
         void onPlayStateChanged(int playState);
     }
 
@@ -1004,9 +1021,12 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
      */
     public static class SimpleOnStateChangeListener implements OnStateChangeListener {
         @Override
-        public void onPlayerStateChanged(int playerState) {}
+        public void onPlayerStateChanged(int playerState) {
+        }
+
         @Override
-        public void onPlayStateChanged(int playState) {}
+        public void onPlayStateChanged(int playState) {
+        }
     }
 
     /**

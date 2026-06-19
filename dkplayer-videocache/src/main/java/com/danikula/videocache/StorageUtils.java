@@ -1,18 +1,20 @@
 package com.danikula.videocache;
 
+import static android.os.Environment.MEDIA_MOUNTED;
+
 import android.content.Context;
 import android.os.Environment;
 
 import java.io.File;
 
-import static android.os.Environment.MEDIA_MOUNTED;
-
 /**
  * Provides application storage paths
  * <p/>
- * See https://github.com/nostra13/Android-Universal-Image-Loader
+ * See <a href="https://github.com/nostra13/Android-Universal-Image-Loader">...</a>
  *
  * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  * @since 1.0.0
  */
 public final class StorageUtils {
@@ -35,9 +37,9 @@ public final class StorageUtils {
     /**
      * Returns application cache directory. Cache directory will be created on SD card
      * <i>("/Android/data/[app_package_name]/cache")</i> (if card is mounted and app has appropriate permission) or
-     * on device's file system depending incoming parameters.
+     * on device's file system depending on incoming parameters.
      *
-     * @param context        Application context
+     * @param context Application context
      * @return Cache {@link File directory}.<br />
      * <b>NOTE:</b> Can be null in some unpredictable cases (if SD card is unmounted and
      * {@link android.content.Context#getCacheDir() Context.getCacheDir()} returns null).
@@ -51,7 +53,7 @@ public final class StorageUtils {
             appCacheDir = context.getCacheDir();
         }
         if (appCacheDir == null) {
-            String cacheDirPath = "/data/data/" + context.getPackageName() + "/cache/";
+            String cacheDirPath = context.getFilesDir().getParent() + "/cache/";
             appCacheDir = new File(cacheDirPath);
         }
         return appCacheDir;

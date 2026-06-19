@@ -28,15 +28,16 @@ import xyz.doikki.videoplayer.util.L;
 /**
  * 模仿抖音短视频，使用ViewPager2实现，(实验性)
  * Created by Doikki on 2019/12/04.
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
-
 public class TikTok3Activity extends BaseActivity<VideoView> {
 
     /**
      * 当前播放位置
      */
     private int mCurPos;
-    private List<TiktokBean> mVideoList = new ArrayList<>();
+    private final List<TiktokBean> mVideoList = new ArrayList<>();
     private Tiktok3Adapter mTiktok3Adapter;
     private ViewPager2 mViewPager;
 
@@ -75,14 +76,11 @@ public class TikTok3Activity extends BaseActivity<VideoView> {
         Intent extras = getIntent();
         int index = extras.getIntExtra(KEY_INDEX, 0);
 
-        mViewPager.post(new Runnable() {
-            @Override
-            public void run() {
-                if (index == 0) {
-                    startPlay(0);
-                } else {
-                    mViewPager.setCurrentItem(index, false);
-                }
+        mViewPager.post(() -> {
+            if (index == 0) {
+                startPlay(0);
+            } else {
+                mViewPager.setCurrentItem(index, false);
             }
         });
     }
@@ -126,12 +124,7 @@ public class TikTok3Activity extends BaseActivity<VideoView> {
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 if (position == mCurPos) return;
-                mViewPager.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        startPlay(position);
-                    }
-                });
+                mViewPager.post(() -> startPlay(position));
             }
 
             @Override

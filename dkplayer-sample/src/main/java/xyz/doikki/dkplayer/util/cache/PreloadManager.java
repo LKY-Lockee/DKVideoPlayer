@@ -15,10 +15,12 @@ import xyz.doikki.videoplayer.util.L;
 
 /**
  * 抖音预加载工具，使用AndroidVideoCache实现
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 public class PreloadManager {
 
-    private static PreloadManager sPreloadManager;
+    private static volatile PreloadManager sPreloadManager;
 
     /**
      * 单线程池，按照添加顺序依次执行{@link PreloadTask}
@@ -105,7 +107,7 @@ public class PreloadManager {
      * 暂停预加载
      * 根据是否反向滑动取消在position之下或之上的PreloadTask
      *
-     * @param position 当前滑到的位置
+     * @param position        当前滑到的位置
      * @param isReverseScroll 列表是否反向滑动
      */
     public void pausePreload(int position, boolean isReverseScroll) {

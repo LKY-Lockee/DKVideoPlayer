@@ -5,11 +5,9 @@ import static xyz.doikki.videoplayer.util.PlayerUtils.stringForTime;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.FrameLayout;
@@ -30,9 +28,11 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
 
 /**
  * 点播底部控制栏
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 public class VodControlView extends FrameLayout implements IControlComponent, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
-    
+
     protected ControlWrapper mControlWrapper;
 
     private final TextView mTotalTime;
@@ -58,8 +58,8 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
     public VodControlView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
-    
-    
+
+
     {
         setVisibility(GONE);
         LayoutInflater.from(getContext()).inflate(getLayoutId(), this, true);
@@ -73,11 +73,6 @@ public class VodControlView extends FrameLayout implements IControlComponent, Vi
         mPlayButton = findViewById(R.id.iv_play);
         mPlayButton.setOnClickListener(this);
         mBottomProgress = findViewById(R.id.bottom_progress);
-
-        //5.1以下系统SeekBar高度需要设置成WRAP_CONTENT
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
-            mVideoProgress.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        }
     }
 
     protected int getLayoutId() {

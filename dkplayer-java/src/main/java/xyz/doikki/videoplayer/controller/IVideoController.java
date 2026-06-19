@@ -19,6 +19,7 @@ public interface IVideoController {
 
     /**
      * 设置锁定状态
+     *
      * @param locked 是否锁定
      */
     void setLocked(boolean locked);

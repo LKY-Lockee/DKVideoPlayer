@@ -1,9 +1,12 @@
 package xyz.doikki.dkplayer.activity.extend;
 
-import android.os.Build;
+import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.Nullable;
 
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.activity.BaseActivity;
@@ -21,8 +24,9 @@ import xyz.doikki.videoplayer.util.PlayerUtils;
 /**
  * 全屏播放
  * Created by Doikki on 2017/4/21.
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
-
 public class FullScreenActivity extends BaseActivity<VideoView> {
 
     private StandardVideoController mController;
@@ -40,6 +44,20 @@ public class FullScreenActivity extends BaseActivity<VideoView> {
     }
 
     @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (!mController.isLocked()) {
+                    finish();
+                }
+            }
+        });
+    }
+
+    @Override
     protected void initView() {
         super.initView();
         mVideoView.startFullScreen();
@@ -52,12 +70,7 @@ public class FullScreenActivity extends BaseActivity<VideoView> {
         TitleView titleView = new TitleView(this);
         // 我这里改变了返回按钮的逻辑，我不推荐这样做，我这样只是为了方便，
         // 如果你想对某个组件进行定制，直接将该组件的代码复制一份，改成你想要的样子
-        titleView.findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        titleView.findViewById(R.id.back).setOnClickListener(v -> finish());
         titleView.setTitle(getString(R.string.str_fullscreen_directly));
         mController.addControlComponent(titleView);
         VodControlView vodControlView = new VodControlView(this);
@@ -74,18 +87,8 @@ public class FullScreenActivity extends BaseActivity<VideoView> {
     }
 
     private void adaptCutoutAboveAndroidP() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            WindowManager.LayoutParams lp = getWindow().getAttributes();
-            lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
-            getWindow().setAttributes(lp);
-        }
-    }
-
-
-    @Override
-    public void onBackPressed() {
-        if (!mController.isLocked()) {
-            finish();
-        }
+        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+        getWindow().setAttributes(lp);
     }
 }

@@ -2,7 +2,6 @@ package xyz.doikki.dkplayer.activity.pip;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.MenuItem;
@@ -10,6 +9,9 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 
@@ -23,14 +25,38 @@ import xyz.doikki.dkplayer.util.Tag;
 import xyz.doikki.videocontroller.StandardVideoController;
 import xyz.doikki.videoplayer.player.VideoView;
 
+/**
+ * Modified by LKY-Lockee on 2026/6/22
+ */
+@SuppressWarnings("rawtypes")
 public class PIPActivity extends BaseActivity {
 
     private PIPManager mPIPManager;
+
+    private final OnBackPressedCallback mBackPressedCallback = new OnBackPressedCallback(true) {
+        @Override
+        public void handleOnBackPressed() {
+            if (mPIPManager.onBackPress()) return;
+            setEnabled(false);
+            getOnBackPressedDispatcher().onBackPressed();
+            setEnabled(true);
+        }
+    };
+
+    private final ActivityResultLauncher<Intent> mOverlayPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (Settings.canDrawOverlays(PIPActivity.this)) {
+                    mPIPManager.startFloatWindow();
+                    mPIPManager.resume();
+                    finish();
+                }
+            });
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pip);
+        getOnBackPressedDispatcher().addCallback(this, mBackPressedCallback);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle(R.string.str_pip_demo);
@@ -85,32 +111,14 @@ public class PIPActivity extends BaseActivity {
     }
 
 
-    @Override
-    public void onBackPressed() {
-        if (mPIPManager.onBackPress()) return;
-        super.onBackPressed();
-    }
-
     public void startFloatWindow(View view) {
-        if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {
+        if (!Settings.canDrawOverlays(this)) {
             Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
-            startActivityForResult(intent, 10000);
+            mOverlayPermissionLauncher.launch(intent);
         } else {
             mPIPManager.startFloatWindow();
             mPIPManager.resume();
             finish();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (requestCode == 10000 && Settings.canDrawOverlays(this)) {
-                mPIPManager.startFloatWindow();
-                mPIPManager.resume();
-                finish();
-            }
         }
     }
 }

@@ -1,5 +1,9 @@
 package xyz.doikki.dkplayer.activity.extend;
 
+import android.os.Build;
+
+import java.util.List;
+
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.activity.BaseActivity;
 import xyz.doikki.dkplayer.bean.VideoBean;
@@ -14,16 +18,16 @@ import xyz.doikki.videocontroller.component.TitleView;
 import xyz.doikki.videocontroller.component.VodControlView;
 import xyz.doikki.videoplayer.player.VideoView;
 
-import java.util.List;
-
 /**
  * 连续播放一个列表
  * Created by Doikki on 2017/4/7.
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
-
+@SuppressWarnings("rawtypes")
 public class PlayListActivity extends BaseActivity {
 
-    private List<VideoBean> data = DataUtil.getVideoList();
+    private final List<VideoBean> data = DataUtil.getVideoList();
 
     private StandardVideoController mController;
     private TitleView mTitleView;
@@ -47,7 +51,12 @@ public class PlayListActivity extends BaseActivity {
         mController.addControlComponent(new PlayerMonitor());
 
         //加载第一条数据
-        VideoBean videoBean = data.get(0);
+        VideoBean videoBean;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            videoBean = data.getFirst();
+        } else {
+            videoBean = data.get(0);
+        }
         mVideoView.setUrl(videoBean.getUrl());
         mTitleView.setTitle(videoBean.getTitle());
         mVideoView.setVideoController(mController);
@@ -55,10 +64,11 @@ public class PlayListActivity extends BaseActivity {
         //监听播放结束
         mVideoView.addOnStateChangeListener(new VideoView.SimpleOnStateChangeListener() {
             private int mCurrentVideoPosition;
+
             @Override
             public void onPlayStateChanged(int playState) {
                 if (playState == VideoView.STATE_PLAYBACK_COMPLETED) {
-                    if (data != null) {
+                    {
                         mCurrentVideoPosition++;
                         if (mCurrentVideoPosition >= data.size()) return;
                         mVideoView.release();

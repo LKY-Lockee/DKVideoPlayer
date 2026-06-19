@@ -30,6 +30,8 @@ import xyz.doikki.videoplayer.util.L;
 /**
  * 播放器演示
  * Created by Doikki on 2017/4/7.
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 
 public class PlayerActivityJava extends BaseActivity<VideoView> {
@@ -152,17 +154,14 @@ public class PlayerActivityJava extends BaseActivity<VideoView> {
 
         //播放其他视频
         EditText etOtherVideo = findViewById(R.id.et_other_video);
-        findViewById(R.id.btn_start_play).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mVideoView.release();
-                mVideoView.setUrl(etOtherVideo.getText().toString());
-                mVideoView.start();
-            }
+        findViewById(R.id.btn_start_play).setOnClickListener(v -> {
+            mVideoView.release();
+            mVideoView.setUrl(etOtherVideo.getText().toString());
+            mVideoView.start();
         });
     }
 
-    private VideoView.OnStateChangeListener mOnStateChangeListener = new VideoView.SimpleOnStateChangeListener() {
+    private final VideoView.OnStateChangeListener mOnStateChangeListener = new VideoView.SimpleOnStateChangeListener() {
         @Override
         public void onPlayerStateChanged(int playerState) {
             switch (playerState) {
@@ -177,26 +176,19 @@ public class PlayerActivityJava extends BaseActivity<VideoView> {
         public void onPlayStateChanged(int playState) {
             switch (playState) {
                 case VideoView.STATE_IDLE:
-                    break;
                 case VideoView.STATE_PREPARING:
-                    break;
                 case VideoView.STATE_PREPARED:
+                case VideoView.STATE_PAUSED:
+                case VideoView.STATE_BUFFERING:
+                case VideoView.STATE_BUFFERED:
+                case VideoView.STATE_PLAYBACK_COMPLETED:
+                case VideoView.STATE_ERROR:
                     break;
                 case VideoView.STATE_PLAYING:
                     //需在此时获取视频宽高
                     int[] videoSize = mVideoView.getVideoSize();
                     L.d("视频宽：" + videoSize[0]);
                     L.d("视频高：" + videoSize[1]);
-                    break;
-                case VideoView.STATE_PAUSED:
-                    break;
-                case VideoView.STATE_BUFFERING:
-                    break;
-                case VideoView.STATE_BUFFERED:
-                    break;
-                case VideoView.STATE_PLAYBACK_COMPLETED:
-                    break;
-                case VideoView.STATE_ERROR:
                     break;
             }
         }
@@ -206,55 +198,37 @@ public class PlayerActivityJava extends BaseActivity<VideoView> {
 
     public void onButtonClick(View view) {
         int id = view.getId();
-        switch (id) {
-            case R.id.scale_default:
-                mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_DEFAULT);
-                break;
-            case R.id.scale_169:
-                mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_16_9);
-                break;
-            case R.id.scale_43:
-                mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_4_3);
-                break;
-            case R.id.scale_original:
-                mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_ORIGINAL);
-                break;
-            case R.id.scale_match_parent:
-                mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_MATCH_PARENT);
-                break;
-            case R.id.scale_center_crop:
-                mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_CENTER_CROP);
-                break;
-
-            case R.id.speed_0_5:
-                mVideoView.setSpeed(0.5f);
-                break;
-            case R.id.speed_0_75:
-                mVideoView.setSpeed(0.75f);
-                break;
-            case R.id.speed_1_0:
-                mVideoView.setSpeed(1.0f);
-                break;
-            case R.id.speed_1_5:
-                mVideoView.setSpeed(1.5f);
-                break;
-            case R.id.speed_2_0:
-                mVideoView.setSpeed(2.0f);
-                break;
-
-            case R.id.screen_shot:
-                ImageView imageView = findViewById(R.id.iv_screen_shot);
-                Bitmap bitmap = mVideoView.doScreenShot();
-                imageView.setImageBitmap(bitmap);
-                break;
-
-            case R.id.mirror_rotate:
-                mVideoView.setMirrorRotation(i % 2 == 0);
-                i++;
-                break;
-            case R.id.btn_mute:
-                mVideoView.setMute(!mVideoView.isMute());
-                break;
+        if (id == R.id.scale_default) {
+            mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_DEFAULT);
+        } else if (id == R.id.scale_169) {
+            mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_16_9);
+        } else if (id == R.id.scale_43) {
+            mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_4_3);
+        } else if (id == R.id.scale_original) {
+            mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_ORIGINAL);
+        } else if (id == R.id.scale_match_parent) {
+            mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_MATCH_PARENT);
+        } else if (id == R.id.scale_center_crop) {
+            mVideoView.setScreenScaleType(VideoView.SCREEN_SCALE_CENTER_CROP);
+        } else if (id == R.id.speed_0_5) {
+            mVideoView.setSpeed(0.5f);
+        } else if (id == R.id.speed_0_75) {
+            mVideoView.setSpeed(0.75f);
+        } else if (id == R.id.speed_1_0) {
+            mVideoView.setSpeed(1.0f);
+        } else if (id == R.id.speed_1_5) {
+            mVideoView.setSpeed(1.5f);
+        } else if (id == R.id.speed_2_0) {
+            mVideoView.setSpeed(2.0f);
+        } else if (id == R.id.screen_shot) {
+            ImageView imageView = findViewById(R.id.iv_screen_shot);
+            Bitmap bitmap = mVideoView.doScreenShot();
+            imageView.setImageBitmap(bitmap);
+        } else if (id == R.id.mirror_rotate) {
+            mVideoView.setMirrorRotation(i % 2 == 0);
+            i++;
+        } else if (id == R.id.btn_mute) {
+            mVideoView.setMute(!mVideoView.isMute());
         }
     }
 

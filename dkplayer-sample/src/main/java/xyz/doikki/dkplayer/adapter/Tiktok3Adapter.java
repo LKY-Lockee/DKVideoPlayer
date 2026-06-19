@@ -1,5 +1,6 @@
 package xyz.doikki.dkplayer.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,19 +13,23 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+
+import java.util.List;
+
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.bean.TiktokBean;
 import xyz.doikki.dkplayer.util.cache.PreloadManager;
 import xyz.doikki.dkplayer.widget.component.TikTokView;
 
-import java.util.List;
-
+/**
+ * Modified by LKY-Lockee on 2026/6/22
+ */
 public class Tiktok3Adapter extends RecyclerView.Adapter<Tiktok3Adapter.ViewHolder> {
 
     /**
      * 数据源
      */
-    private List<TiktokBean> mVideoBeans;
+    private final List<TiktokBean> mVideoBeans;
 
     public Tiktok3Adapter(List<TiktokBean> videoBeans) {
         this.mVideoBeans = videoBeans;
@@ -38,7 +43,7 @@ public class Tiktok3Adapter extends RecyclerView.Adapter<Tiktok3Adapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         Context context = holder.itemView.getContext();
         TiktokBean item = mVideoBeans.get(position);
         //开始预加载
@@ -67,10 +72,10 @@ public class Tiktok3Adapter extends RecyclerView.Adapter<Tiktok3Adapter.ViewHold
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public int mPosition;
-        public TextView mTitle;//标题
-        public ImageView mThumb;//封面图
-        public TikTokView mTikTokView;
-        public FrameLayout mPlayerContainer;
+        public final TextView mTitle;//标题
+        public final ImageView mThumb;//封面图
+        public final TikTokView mTikTokView;
+        public final FrameLayout mPlayerContainer;
 
         ViewHolder(View itemView) {
             super(itemView);

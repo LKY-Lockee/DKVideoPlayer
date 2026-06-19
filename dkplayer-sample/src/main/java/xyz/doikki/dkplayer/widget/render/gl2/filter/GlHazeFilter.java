@@ -2,8 +2,6 @@ package xyz.doikki.dkplayer.widget.render.gl2.filter;
 
 import android.opengl.GLES20;
 
-
-
 public class GlHazeFilter extends GlFilter {
 
     private static final String FRAGMENT_SHADER =

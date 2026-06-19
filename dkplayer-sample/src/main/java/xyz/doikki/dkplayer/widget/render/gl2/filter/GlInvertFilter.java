@@ -1,7 +1,5 @@
 package xyz.doikki.dkplayer.widget.render.gl2.filter;
 
-
-
 public class GlInvertFilter extends GlFilter {
     private static final String FRAGMENT_SHADER =
             "precision mediump float;" +

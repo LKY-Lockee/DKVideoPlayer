@@ -2,10 +2,12 @@ package xyz.doikki.dkplayer.widget.render.gl2.filter;
 
 import android.opengl.GLES20;
 
+/**
+ * Modified by LKY-Lockee on 2026/6/22
+ */
 public class GlPosterizeFilter extends GlFilter {
 
-    private static final String POSTERIZE_FRAGMENT_SHADER = "" +
-            "precision mediump float;" +
+    private static final String POSTERIZE_FRAGMENT_SHADER = "precision mediump float;" +
             " varying vec2 vTextureCoord;\n" +
             "\n" +
             "uniform lowp sampler2D sTexture;\n" +
@@ -27,11 +29,7 @@ public class GlPosterizeFilter extends GlFilter {
     public void setColorLevels(int colorLevels) {
         if (colorLevels < 0) {
             this.colorLevels = 0;
-        } else if (colorLevels > 256) {
-            this.colorLevels = 256;
-        } else {
-            this.colorLevels = colorLevels;
-        }
+        } else this.colorLevels = Math.min(colorLevels, 256);
     }
 
     @Override

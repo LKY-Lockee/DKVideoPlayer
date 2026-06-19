@@ -3,11 +3,15 @@ package xyz.doikki.videoplayer.player;
 
 import androidx.annotation.Nullable;
 
+import java.util.Objects;
+
 import xyz.doikki.videoplayer.render.RenderViewFactory;
 import xyz.doikki.videoplayer.render.TextureRenderViewFactory;
 
 /**
  * 播放器全局配置
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 public class VideoViewConfig {
 
@@ -25,7 +29,7 @@ public class VideoViewConfig {
 
     public final ProgressManager mProgressManager;
 
-    public final PlayerFactory mPlayerFactory;
+    public final PlayerFactory<?> mPlayerFactory;
 
     public final int mScreenScaleType;
 
@@ -40,18 +44,10 @@ public class VideoViewConfig {
         mEnableAudioFocus = builder.mEnableAudioFocus;
         mProgressManager = builder.mProgressManager;
         mScreenScaleType = builder.mScreenScaleType;
-        if (builder.mPlayerFactory == null) {
-            //默认为AndroidMediaPlayer
-            mPlayerFactory = AndroidMediaPlayerFactory.create();
-        } else {
-            mPlayerFactory = builder.mPlayerFactory;
-        }
-        if (builder.mRenderViewFactory == null) {
-            //默认使用TextureView渲染视频
-            mRenderViewFactory = TextureRenderViewFactory.create();
-        } else {
-            mRenderViewFactory = builder.mRenderViewFactory;
-        }
+        //默认为AndroidMediaPlayer
+        mPlayerFactory = Objects.requireNonNullElseGet(builder.mPlayerFactory, AndroidMediaPlayerFactory::create);
+        //默认使用TextureView渲染视频
+        mRenderViewFactory = Objects.requireNonNullElseGet(builder.mRenderViewFactory, TextureRenderViewFactory::create);
         mAdaptCutout = builder.mAdaptCutout;
     }
 
@@ -63,7 +59,7 @@ public class VideoViewConfig {
         private boolean mEnableOrientation;
         private boolean mEnableAudioFocus = true;
         private ProgressManager mProgressManager;
-        private PlayerFactory mPlayerFactory;
+        private PlayerFactory<?> mPlayerFactory;
         private int mScreenScaleType;
         private RenderViewFactory mRenderViewFactory;
         private boolean mAdaptCutout = true;
@@ -111,7 +107,7 @@ public class VideoViewConfig {
         /**
          * 自定义播放核心
          */
-        public Builder setPlayerFactory(PlayerFactory playerFactory) {
+        public Builder setPlayerFactory(PlayerFactory<?> playerFactory) {
             mPlayerFactory = playerFactory;
             return this;
         }

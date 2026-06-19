@@ -6,8 +6,12 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.text.style.ImageSpan;
 
+import androidx.annotation.NonNull;
+
 /**
  * 图文混排使图片文字基于中线对齐
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 public class CenteredImageSpan extends ImageSpan {
 
@@ -16,7 +20,7 @@ public class CenteredImageSpan extends ImageSpan {
     }
 
     @Override
-    public int getSize(Paint paint, CharSequence text, int start, int end,
+    public int getSize(@NonNull Paint paint, CharSequence text, int start, int end,
                        Paint.FontMetricsInt fm) {
         Drawable d = getDrawable();
         Rect rect = d.getBounds();
@@ -38,7 +42,7 @@ public class CenteredImageSpan extends ImageSpan {
 
     @Override
     public void draw(Canvas canvas, CharSequence text, int start, int end,
-                     float x, int top, int y, int bottom, Paint paint) {
+                     float x, int top, int y, int bottom, @NonNull Paint paint) {
         Drawable b = getDrawable();
         canvas.save();
         int transY;

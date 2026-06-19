@@ -27,15 +27,16 @@ import xyz.doikki.videoplayer.util.L;
 /**
  * 模仿抖音短视频，使用VerticalViewPager实现，实现了预加载功能
  * Created by Doikki on 2019/10/13.
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
-
 public class TikTok2Activity extends BaseActivity<VideoView> {
 
     /**
      * 当前播放位置
      */
     private int mCurPos;
-    private List<TiktokBean> mVideoList = new ArrayList<>();
+    private final List<TiktokBean> mVideoList = new ArrayList<>();
     private Tiktok2Adapter mTiktok2Adapter;
     private VerticalViewPager mViewPager;
 
@@ -74,12 +75,7 @@ public class TikTok2Activity extends BaseActivity<VideoView> {
         int index = extras.getIntExtra(KEY_INDEX, 0);
         mViewPager.setCurrentItem(index);
 
-        mViewPager.post(new Runnable() {
-            @Override
-            public void run() {
-                startPlay(index);
-            }
-        });
+        mViewPager.post(() -> startPlay(index));
     }
 
     private void initVideoView() {
@@ -143,7 +139,7 @@ public class TikTok2Activity extends BaseActivity<VideoView> {
 
     private void startPlay(int position) {
         int count = mViewPager.getChildCount();
-        for (int i = 0; i < count; i ++) {
+        for (int i = 0; i < count; i++) {
             View itemView = mViewPager.getChildAt(i);
             Tiktok2Adapter.ViewHolder viewHolder = (Tiktok2Adapter.ViewHolder) itemView.getTag();
             if (viewHolder.mPosition == position) {

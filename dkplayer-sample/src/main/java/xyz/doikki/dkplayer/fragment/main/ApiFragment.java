@@ -3,6 +3,8 @@ package xyz.doikki.dkplayer.fragment.main;
 import android.content.Intent;
 import android.view.View;
 
+import java.io.File;
+
 import xyz.doikki.dkplayer.R;
 import xyz.doikki.dkplayer.activity.api.ParallelPlayActivity;
 import xyz.doikki.dkplayer.activity.api.PlayRawAssetsActivity;
@@ -11,6 +13,9 @@ import xyz.doikki.dkplayer.fragment.BaseFragment;
 import xyz.doikki.dkplayer.util.DataUtil;
 import xyz.doikki.videoplayer.util.L;
 
+/**
+ * Modified by LKY-Lockee on 2026/6/22
+ */
 public class ApiFragment extends BaseFragment implements View.OnClickListener {
 
     //    private static final String VOD_URL = "http://mov.bn.netease.com/open-movie/nos/flv/2017/01/03/SC8U8K7BC_hd.flv";
@@ -57,28 +62,24 @@ public class ApiFragment extends BaseFragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_vod:
-                PlayerActivity.start(getActivity(), VOD_URL, getString(R.string.str_api_vod), false, false);
-                break;
-            case R.id.btn_live:
-                PlayerActivity.start(getActivity(), LIVE_URL, getString(R.string.str_api_live), true, false);
-                break;
-            case R.id.btn_music:
-                PlayerActivity.start(getActivity(), MUSIC_URL, getString(R.string.str_api_music), false, false);
-                break;
-            case R.id.btn_file:
-                // 此处演示的是播放私有目录的文件，如果是共有目录需要存储权限
-                String url = "file://" + requireContext().getExternalCacheDir().getAbsolutePath() + "/test.mp4";
+        int id = v.getId();
+        if (id == R.id.btn_vod) {
+            PlayerActivity.start(requireActivity(), VOD_URL, getString(R.string.str_api_vod), false, false);
+        } else if (id == R.id.btn_live) {
+            PlayerActivity.start(requireActivity(), LIVE_URL, getString(R.string.str_api_live), true, false);
+        } else if (id == R.id.btn_music) {
+            PlayerActivity.start(requireActivity(), MUSIC_URL, getString(R.string.str_api_music), false, false);
+        } else if (id == R.id.btn_file) {// 此处演示的是播放私有目录的文件，如果是共有目录需要存储权限
+            File cacheDir = requireContext().getExternalCacheDir();
+            if (cacheDir != null) {
+                String url = "file://" + cacheDir.getAbsolutePath() + "/test.mp4";
                 L.d("play local file: " + url);
-                PlayerActivity.start(getActivity(), url, getString(R.string.str_file), false, false);
-                break;
-            case R.id.btn_raw_assets:
-                startActivity(new Intent(getActivity(), PlayRawAssetsActivity.class));
-                break;
-            case R.id.btn_parallel_play:
-                startActivity(new Intent(getActivity(), ParallelPlayActivity.class));
-                break;
+                PlayerActivity.start(requireActivity(), url, getString(R.string.str_file), false, false);
+            }
+        } else if (id == R.id.btn_raw_assets) {
+            startActivity(new Intent(requireActivity(), PlayRawAssetsActivity.class));
+        } else if (id == R.id.btn_parallel_play) {
+            startActivity(new Intent(requireActivity(), ParallelPlayActivity.class));
         }
     }
 }

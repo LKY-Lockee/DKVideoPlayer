@@ -7,16 +7,14 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.res.Resources;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.os.Build;
-import android.telephony.TelephonyManager;
 import android.util.TypedValue;
 import android.view.Display;
-import android.view.KeyCharacterMap;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.ViewConfiguration;
 import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
@@ -31,6 +29,8 @@ import java.util.Locale;
 /**
  * 播放器相关工具类
  * Created by Doikki on 2017/4/10.
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 
 public final class PlayerUtils {
@@ -84,17 +84,18 @@ public final class PlayerUtils {
      * 是否存在NavigationBar
      */
     public static boolean hasNavigationBar(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WindowManager wm = getWindowManager(context);
+            Rect currentBounds = wm.getCurrentWindowMetrics().getBounds();
+            Rect maxBounds = wm.getMaximumWindowMetrics().getBounds();
+            return maxBounds.width() != currentBounds.width() || maxBounds.height() != currentBounds.height();
+        } else {
             Display display = getWindowManager(context).getDefaultDisplay();
             Point size = new Point();
             Point realSize = new Point();
             display.getSize(size);
             display.getRealSize(realSize);
             return realSize.x != size.x || realSize.y != size.y;
-        } else {
-            boolean menu = ViewConfiguration.get(context).hasPermanentMenuKey();
-            boolean back = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
-            return !(menu || back);
         }
     }
 
@@ -177,7 +178,6 @@ public final class PlayerUtils {
      * 判断当前网络类型
      */
     public static int getNetworkType(Context context) {
-        //改为context.getApplicationContext()，防止在Android 6.0上发生内存泄漏
         ConnectivityManager connectMgr = (ConnectivityManager) context.getApplicationContext()
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -185,48 +185,25 @@ public final class PlayerUtils {
             return NO_NETWORK;
         }
 
-        NetworkInfo networkInfo = connectMgr.getActiveNetworkInfo();
-        if (networkInfo == null) {
-            // 没有任何网络
+        Network network = connectMgr.getActiveNetwork();
+        if (network == null) {
             return NO_NETWORK;
         }
-        if (!networkInfo.isConnected()) {
-            // 网络断开或关闭
+
+        NetworkCapabilities capabilities = connectMgr.getNetworkCapabilities(network);
+        if (capabilities == null) {
+            return NO_NETWORK;
+        }
+        if (!capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) {
             return NETWORK_CLOSED;
         }
-        if (networkInfo.getType() == ConnectivityManager.TYPE_ETHERNET) {
-            // 以太网网络
+        if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
             return NETWORK_ETHERNET;
-        } else if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
-            // wifi网络，当激活时，默认情况下，所有的数据流量将使用此连接
+        } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
             return NETWORK_WIFI;
-        } else if (networkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
-            // 移动数据连接,不能与连接共存,如果wifi打开，则自动关闭
-            switch (networkInfo.getSubtype()) {
-                // 2G
-                case TelephonyManager.NETWORK_TYPE_GPRS:
-                case TelephonyManager.NETWORK_TYPE_EDGE:
-                case TelephonyManager.NETWORK_TYPE_CDMA:
-                case TelephonyManager.NETWORK_TYPE_1xRTT:
-                case TelephonyManager.NETWORK_TYPE_IDEN:
-                    // 3G
-                case TelephonyManager.NETWORK_TYPE_UMTS:
-                case TelephonyManager.NETWORK_TYPE_EVDO_0:
-                case TelephonyManager.NETWORK_TYPE_EVDO_A:
-                case TelephonyManager.NETWORK_TYPE_HSDPA:
-                case TelephonyManager.NETWORK_TYPE_HSUPA:
-                case TelephonyManager.NETWORK_TYPE_HSPA:
-                case TelephonyManager.NETWORK_TYPE_EVDO_B:
-                case TelephonyManager.NETWORK_TYPE_EHRPD:
-                case TelephonyManager.NETWORK_TYPE_HSPAP:
-                    // 4G
-                case TelephonyManager.NETWORK_TYPE_LTE:
-                    // 5G
-                case TelephonyManager.NETWORK_TYPE_NR:
-                    return NETWORK_MOBILE;
-            }
+        } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+            return NETWORK_MOBILE;
         }
-        // 未知网络
         return NETWORK_UNKNOWN;
     }
 

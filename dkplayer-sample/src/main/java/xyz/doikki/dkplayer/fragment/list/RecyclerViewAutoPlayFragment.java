@@ -1,5 +1,7 @@
 package xyz.doikki.dkplayer.fragment.list;
 
+import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
+
 import android.graphics.Rect;
 import android.view.View;
 
@@ -8,8 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import xyz.doikki.dkplayer.adapter.VideoRecyclerViewAdapter;
 import xyz.doikki.videoplayer.util.L;
-
-import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
 
 /**
  * 滑动列表自动播放，仅包含自动播放的逻辑

@@ -4,8 +4,7 @@ import android.opengl.GLES20;
 
 public class GlVibranceFilter extends GlFilter {
 
-    private static final String VIBRANCE_FRAGMENT_SHADER = "" +
-            "precision mediump float;" +
+    private static final String VIBRANCE_FRAGMENT_SHADER = "precision mediump float;" +
             " varying vec2 vTextureCoord;\n" +
             "\n" +
             " uniform lowp sampler2D sTexture;\n" +

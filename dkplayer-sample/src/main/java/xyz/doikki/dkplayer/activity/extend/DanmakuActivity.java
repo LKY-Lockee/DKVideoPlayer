@@ -1,6 +1,7 @@
 package xyz.doikki.dkplayer.activity.extend;
 
 import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 
 import xyz.doikki.dkplayer.R;
@@ -13,8 +14,9 @@ import xyz.doikki.videoplayer.player.VideoView;
 /**
  * 弹幕播放
  * Created by Doikki on 17-6-11.
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
-
 public class DanmakuActivity extends BaseActivity<VideoView> {
 
     private MyDanmakuView mMyDanmakuView;
@@ -76,7 +78,7 @@ public class DanmakuActivity extends BaseActivity<VideoView> {
     }
 
 
-    private Handler mHandler = new Handler();
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     /**
      * 模拟弹幕

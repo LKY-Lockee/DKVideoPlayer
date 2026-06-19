@@ -5,27 +5,24 @@ import com.danikula.videocache.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * {@link DiskUsage} that uses LRU (Least Recently Used) strategy to trim cache.
  *
  * @author Alexey Danilov (danikula@gmail.com).
+ * <p>
+ * Modified by LKY-Lockee on 2026/6/22
  */
 public abstract class LruDiskUsage implements DiskUsage {
 
-    private final ExecutorService workerThread = Executors.newSingleThreadExecutor();
-
     @Override
     public void touch(File file) throws IOException {
-        workerThread.submit(new TouchCallable(file));
-    }
-
-    private void touchInBackground(File file) throws IOException {
         Files.setLastModifiedNow(file);
-        List<File> files = Files.getLruListFiles(file.getParentFile());
+        File parent = file.getParentFile();
+        if (parent == null) {
+            throw new IOException("File " + file + " has no parent directory");
+        }
+        List<File> files = Files.getLruListFiles(parent);
         trim(files);
     }
 
@@ -56,20 +53,5 @@ public abstract class LruDiskUsage implements DiskUsage {
             totalSize += file.length();
         }
         return totalSize;
-    }
-
-    private class TouchCallable implements Callable<Void> {
-
-        private final File file;
-
-        public TouchCallable(File file) {
-            this.file = file;
-        }
-
-        @Override
-        public Void call() throws Exception {
-            touchInBackground(file);
-            return null;
-        }
     }
 }
