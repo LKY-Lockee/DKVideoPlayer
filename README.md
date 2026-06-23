@@ -12,10 +12,10 @@
 
 A video player for Android.
 
-![Maven Central](https://img.shields.io/maven-central/v/xyz.doikki.android.dkplayer/dkplayer-java)
-[![API](https://img.shields.io/badge/API-16%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=16)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.lky-lockee.dkplayer/dkplayer-java)](https://central.sonatype.com/namespace/io.github.lky-lockee.dkplayer)
+[![API](https://img.shields.io/badge/API-28%2B-brightgreen.svg?style=flat)](https://developer.android.google.cn/about/versions/pie?hl=zh-cn)
 
-### 中文 | [English](https://github.com/Doikki/DKVideoPlayer/blob/master/README-en.md)
+### 中文 | [English](https://github.com/LKY-Lockee/DKVideoPlayer/blob/master/README-en.md)
 
 ### [Demo](https://www.pgyer.com/EGTZ)
 

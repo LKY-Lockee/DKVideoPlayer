@@ -4,18 +4,22 @@ plugins {
 	id("com.android.application")
 }
 
-apply(from = "../constants.gradle.kts")
+val mCompileSdkVersion = rootProject.extra["mCompileSdkVersion"] as Int
+val mMinSdkVersion = rootProject.extra["mMinSdkVersion"] as Int
+val mTargetSdkVersion = rootProject.extra["mTargetSdkVersion"] as Int
+val mReleaseVersion = rootProject.extra["mReleaseVersion"] as String
+val mReleaseVersionCode = rootProject.extra["mReleaseVersionCode"] as Int
 
 android {
 	namespace = "xyz.doikki.dkplayer"
-	compileSdk = project.extra["compileSdkVersion"] as Int
+	compileSdk = mCompileSdkVersion
 
 	defaultConfig {
 		applicationId = "xyz.doikki.dkplayer"
-		minSdk = project.extra["minSdkVersion"] as Int
-		targetSdk = project.extra["targetSdkVersion"] as Int
-		versionCode = project.extra["releaseVersionCode"] as Int
-		versionName = project.extra["releaseVersion"] as String
+		minSdk = mMinSdkVersion
+		targetSdk = mTargetSdkVersion
+		versionName = mReleaseVersion
+		versionCode = mReleaseVersionCode
 		multiDexEnabled = true
 	}
 
@@ -55,7 +59,12 @@ android {
 }
 
 dependencies {
-	implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
+	implementation(project(":dkplayer-java"))
+	implementation(project(":dkplayer-ui"))
+	implementation(project(":dkplayer-players:ijk"))
+	implementation(project(":dkplayer-players:exo"))
+	implementation(project(":dkplayer-videocache"))
+
 	implementation("androidx.core:core-ktx:1.19.0")
 	implementation("androidx.recyclerview:recyclerview:1.4.0")
 	implementation("androidx.constraintlayout:constraintlayout:2.2.1")
@@ -66,13 +75,6 @@ dependencies {
 	implementation("com.google.android.material:material:1.14.0")
 	implementation("com.google.code.gson:gson:2.14.0")
 	implementation("androidx.activity:activity-ktx:1.13.0")
-
-	implementation(project(":dkplayer-java"))
-	implementation(project(":dkplayer-ui"))
-	implementation(project(":dkplayer-players:ijk"))
-	implementation(project(":dkplayer-localrepo"))
-	implementation(project(":dkplayer-players:exo"))
-	implementation(project(":dkplayer-videocache"))
 
 	annotationProcessor("com.github.bumptech.glide:compiler:5.0.7")
 }

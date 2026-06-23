@@ -168,6 +168,10 @@ public final class ExoMediaSourceHelper {
         }
     }
 
+    public void setHttpDataSourceFactory(HttpDataSource.Factory factory) {
+        mHttpDataSourceFactory = factory;
+    }
+
     public void setCache(Cache cache) {
         this.mCache = cache;
     }

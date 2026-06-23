@@ -8,6 +8,15 @@ pluginManagement {
 		maven { url = uri("https://artifactory.appodeal.com/appodeal") }
 		maven { url = uri("https://jitpack.io/") }
 	}
+
+	resolutionStrategy {
+		eachPlugin {
+			if (requested.id.id == "com.kezong.fat-aar")
+			{
+				useModule("com.github.aasitnikov:fat-aar-android:${requested.version}")
+			}
+		}
+	}
 }
 
 @Suppress("UnstableApiUsage")
@@ -28,7 +37,8 @@ plugins {
 include(":dkplayer-sample")
 include(":dkplayer-videocache")
 include(":dkplayer-java")
-include(":dkplayer-localrepo")
 include(":dkplayer-ui")
 include("dkplayer-players:ijk")
 include("dkplayer-players:exo")
+
+include("dkplayer-locallibs:ijkplayer")

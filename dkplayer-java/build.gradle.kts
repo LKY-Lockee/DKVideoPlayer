@@ -2,16 +2,18 @@
 
 plugins {
 	id("com.android.library")
+	id("com.vanniktech.maven.publish")
 }
 
-apply(from = "../constants.gradle.kts")
+val mCompileSdkVersion = rootProject.extra["mCompileSdkVersion"] as Int
+val mMinSdkVersion = rootProject.extra["mMinSdkVersion"] as Int
 
 android {
 	namespace = "xyz.doikki.videoplayer"
-	compileSdk = project.extra["compileSdkVersion"] as Int
+	compileSdk = mCompileSdkVersion
 
 	defaultConfig {
-		minSdk = project.extra["minSdkVersion"] as Int
+		minSdk = mMinSdkVersion
 	}
 
 	buildFeatures {
@@ -24,8 +26,5 @@ extra.apply {
 }
 
 dependencies {
-	implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
 	implementation("androidx.annotation:annotation-jvm:1.10.0")
 }
-
-apply(from = "../publish.gradle.kts")

@@ -12,10 +12,10 @@
 
 A video player for Android.
 
-![Maven Central](https://img.shields.io/maven-central/v/xyz.doikki.android.dkplayer/dkplayer-java)
-[![API](https://img.shields.io/badge/API-16%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=16)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.lky-lockee.dkplayer/dkplayer-java)](https://central.sonatype.com/namespace/io.github.lky-lockee.dkplayer)
+[![API](https://img.shields.io/badge/API-28%2B-brightgreen.svg?style=flat)](https://developer.android.com/about/versions/pie)
 
-### [中文](https://github.com/Doikki/DKVideoPlayer/blob/master/README.md) | English
+### [中文](https://github.com/LKY-Lockee/DKVideoPlayer/blob/master/README.md) | English
 
 ### [Demo](https://www.pgyer.com/EGTZ)
 
@@ -32,7 +32,7 @@ A video player for Android.
 3. Read the source code
 4. Submit an [issue](https://github.com/Doikki/DKVideoPlayer/issues) or contact me: xinyunjian1995@gmail.com
 
-### communicate
+### Communicate
 
 QQ Group: 758154597
 

@@ -72,6 +72,7 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
 
     //--------- data sources ---------//
     protected String mUrl;//当前播放视频的地址
+    protected String mProgressKey = null;
     protected Map<String, String> mHeaders;//当前视频地址的请求头
     protected AssetFileDescriptor mAssetFileDescriptor;//assets文件
 
@@ -209,7 +210,7 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
         }
         //读取播放进度
         if (mProgressManager != null) {
-            mCurrentPosition = mProgressManager.getSavedProgress(mUrl);
+            mCurrentPosition = mProgressManager.getSavedProgress(mProgressKey == null ? mUrl : mProgressKey);
         }
         initPlayer();
         addDisplay();
@@ -405,7 +406,7 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
     protected void saveProgress() {
         if (mProgressManager != null && mCurrentPosition > 0) {
             L.d("saveProgress: " + mCurrentPosition);
-            mProgressManager.saveProgress(mUrl, mCurrentPosition);
+            mProgressManager.saveProgress(mProgressKey == null ? mUrl : mProgressKey, mCurrentPosition);
         }
     }
 
@@ -572,7 +573,7 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
         mCurrentPosition = 0;
         if (mProgressManager != null) {
             //播放完成，清除进度
-            mProgressManager.saveProgress(mUrl, 0);
+            mProgressManager.saveProgress(mProgressKey == null ? mUrl : mProgressKey, 0);
         }
         setPlayState(STATE_PLAYBACK_COMPLETED);
     }
@@ -642,6 +643,10 @@ public class BaseVideoView<P extends AbstractPlayer> extends FrameLayout
     public void setAssetFileDescriptor(AssetFileDescriptor fd) {
         mUrl = null;
         this.mAssetFileDescriptor = fd;
+    }
+
+    public void setProgressKey(String key) {
+        mProgressKey = key;
     }
 
     /**

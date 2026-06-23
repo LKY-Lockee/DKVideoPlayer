@@ -2,16 +2,19 @@
 
 plugins {
 	id("com.android.library")
+	id("com.vanniktech.maven.publish")
+	id("com.kezong.fat-aar")
 }
 
-apply(from = "../../constants.gradle.kts")
+val mCompileSdkVersion = rootProject.extra["mCompileSdkVersion"] as Int
+val mMinSdkVersion = rootProject.extra["mMinSdkVersion"] as Int
 
 android {
 	namespace = "xyz.doikki.videoplayer.ijk"
-	compileSdk = project.extra["compileSdkVersion"] as Int
+	compileSdk = mCompileSdkVersion
 
 	defaultConfig {
-		minSdk = project.extra["minSdkVersion"] as Int
+		minSdk = mMinSdkVersion
 	}
 }
 
@@ -20,9 +23,7 @@ extra.apply {
 }
 
 dependencies {
-	implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
-	implementation(project(":dkplayer-localrepo"))
+	embed(project(":dkplayer-locallibs:ijkplayer"))
+
 	compileOnly(project(":dkplayer-java"))
 }
-
-apply(from = "../../publish.gradle.kts")
